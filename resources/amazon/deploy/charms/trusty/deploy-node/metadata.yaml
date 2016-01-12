@@ -1,0 +1,11 @@
+name: deploy-node
+summary: deploy a node for cloud deployer env
+maintainer: root <root@ubuntu-trusty-1.c.jujutest-1158.internal>
+description: |
+  <Multi-line description here
+tags:
+  # Replace "misc" with one or more whitelisted tags from this list:
+  # https://jujucharms.com/docs/stable/authors-charm-metadata
+  - misc
+  - ops
+subordinate: false
