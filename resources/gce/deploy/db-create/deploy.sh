@@ -104,6 +104,6 @@ do
 	
 	 echo " Starting chef add node : 'role[shard]' on host : ${fqdn}"	
         knife bootstrap  ${fqdn} --ssh-user ubuntu --sudo -r 'role[shard]' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_shard} role[shard]  "; exit 2; }
-i	echo " Successfully finished chef install 'role[shard]'  on host : ${fqdn}"
+	echo " Successfully finished chef install 'role[shard]'  on host : ${fqdn}"
 done
 

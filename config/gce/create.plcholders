@@ -26,3 +26,4 @@
 <system_name>=SYSTEM_NAME
 <system_password>=SYSTEM_PASSWORD
 <mongo_version>=MONGO_VERSION
+<dist_version>=DIST_VERSION

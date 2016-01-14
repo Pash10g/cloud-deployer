@@ -11,8 +11,11 @@ if !which knife 2>/dev/null; then
 fi
 
 
+if [ -d /root/.juju/environments ]; then
+	rm /root/.juju/environments/<env_name>*
+fi
 
-cp "" > /root/.juju/environments.yaml
+echo "" > /root/.juju/environments.yaml
 
 echo "default: <env_name>" >> /root/.juju/environments.yaml
 echo "environments:" >> /root/.juju/environments.yaml

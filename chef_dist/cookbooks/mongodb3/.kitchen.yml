@@ -1,0 +1,226 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+  require_chef_omnibus: true
+  environments_path:    'test/environments'
+  data_bags_path:       'test/data_bags'
+  roles_path:           'test/roles'
+
+platforms:
+  - name: ubuntu-12.04
+  - name: debian-7.8
+  - name: centos-6.6
+  - name: oel-6.6
+    driver:
+      box: rafacas/oel66-plain
+      box_url: https://atlas.hashicorp.com/rafacas/boxes/oel66-plain/versions/1.0.0/providers/virtualbox.box
+  - name: ami-2014.03
+    driver:
+      box_url: http://images.geekandi.com/amazon-linux/vagrant-amazon-linux64-2014.03-public-virtualbox.box
+
+suites:
+  - name: default
+    driver:
+      vm_hostname: mongo3
+    run_list:
+      - recipe[apt]
+      - recipe[mongodb3::default]
+    attributes:
+      chef_client:
+        config:
+          force_logger: true
+          log_level: info
+      build-essential:
+        compile_time: false
+      apt:
+        compile_time_update: true
+    provisioner:
+      client_rb:
+        environment: dev
+    excludes:
+      - oel-6.6
+      - ami-2014.03
+
+  - name: default-305
+    driver:
+      vm_hostname: mongo3
+    run_list:
+      - recipe[apt]
+      - recipe[mongodb3::default]
+    attributes:
+      mongodb3:
+        version: 3.0.5
+      chef_client:
+        config:
+          force_logger: true
+          log_level: info
+      build-essential:
+        compile_time: false
+      apt:
+        compile_time_update: true
+    provisioner:
+      client_rb:
+        environment: dev
+    excludes:
+      - oel-6.6
+      - ami-2014.03
+
+  - name: replica
+    driver:
+      vm_hostname: replica
+    run_list:
+      - recipe[apt]
+      - role[replset]
+    attributes:
+      chef_client:
+        config:
+          force_logger: true
+          log_level: info
+      build-essential:
+        compile_time: false
+      apt:
+        compile_time_update: true
+    provisioner:
+      client_rb:
+        environment: dev
+    excludes:
+      - oel-6.6
+      - ami-2014.03
+
+  - name: configsvr
+    driver:
+      vm_hostname: configsvr
+    run_list:
+      - recipe[apt]
+      - role[configsvr]
+    attributes:
+      chef_client:
+        config:
+          force_logger: true
+          log_level: info
+      build-essential:
+        compile_time: false
+      apt:
+        compile_time_update: true
+    provisioner:
+      client_rb:
+        environment: dev
+    excludes:
+      - oel-6.6
+      - ami-2014.03
+
+  - name: mongos
+    driver:
+      vm_hostname: mongos
+    run_list:
+      - recipe[apt]
+      - role[mongos]
+    attributes:
+      chef_client:
+        config:
+          force_logger: true
+          log_level: info
+      build-essential:
+        compile_time: false
+      apt:
+        compile_time_update: true
+    provisioner:
+      client_rb:
+        environment: dev
+    excludes:
+      - oel-6.6
+      - ami-2014.03
+
+  - name: wired-tiger
+    driver:
+      vm_hostname: wired-tiger
+    run_list:
+      - recipe[apt]
+      - role[wired_tiger]
+    attributes:
+      chef_client:
+        config:
+          force_logger: true
+          log_level: info
+      build-essential:
+        compile_time: false
+      apt:
+        compile_time_update: true
+    provisioner:
+      client_rb:
+        environment: dev
+    excludes:
+      - oel-6.6
+      - ami-2014.03
+
+  - name: mms-automation-agent
+    driver:
+      vm_hostname: mms-automation-agent
+    run_list:
+      - recipe[apt]
+      - role[mms_automation_agent]
+    attributes:
+      chef_client:
+        config:
+          force_logger: true
+          log_level: info
+      build-essential:
+        compile_time: false
+      apt:
+        compile_time_update: true
+    provisioner:
+      client_rb:
+        environment: dev
+    excludes:
+      - oel-6.6
+      - ami-2014.03
+      - debian-7.8
+
+  - name: mms-monitoring-agent
+    driver:
+      vm_hostname: mms-monitoring-agent
+    run_list:
+      - recipe[apt]
+      - role[mms_monitoring_agent]
+    attributes:
+      chef_client:
+        config:
+          force_logger: true
+          log_level: info
+      build-essential:
+        compile_time: false
+      apt:
+        compile_time_update: true
+    provisioner:
+      client_rb:
+        environment: dev
+    excludes:
+      - oel-6.6
+      - ami-2014.03
+      - debian-7.8
+
+  - name: ami-default
+    driver:
+      vm_hostname: mongo3
+    run_list:
+      - recipe[mongodb3::default]
+    attributes:
+      mongodb3:
+        version: 3.0.7
+      chef_client:
+        config:
+          force_logger: true
+          log_level: info
+      build-essential:
+        compile_time: false
+    provisioner:
+      client_rb:
+        environment: dev
+    excludes:
+      - ubuntu-12.04
+      - centos-6.6
+      - oel-6.6
+      - debian-7.8

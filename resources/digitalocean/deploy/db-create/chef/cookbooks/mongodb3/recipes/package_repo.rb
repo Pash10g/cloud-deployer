@@ -31,7 +31,7 @@ case node['platform_family']
   when 'debian'
     apt_repository 'mongodb' do
       uri node['mongodb3']['package']['repo']['url']
-      distribution "#{node['lsb']['codename']}/mongodb-org/stable"
+      distribution "#{node['lsb']['codename']}/mongodb-org/<dist_version>"
       components node['mongodb3']['package']['repo']['apt']['components']
       #keyserver node['mongodb3']['package']['repo']['apt']['keyserver']
       #key node['mongodb3']['package']['repo']['apt']['key']
@@ -40,12 +40,12 @@ case node['platform_family']
     include_recipe 'apt'
 end
 
-bash "run gpg key" do
-	code "sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927"
-end
+#bash "run gpg key" do
+#	code "sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927"
+#end
 
-bash "run gpg key" do
-	code "sudo apt-get update"
-end
+#bash "run gpg key" do
+#	code "sudo apt-get update"
+#end
 
 

@@ -3,7 +3,12 @@
   "description": "Role for Mongos",
   "json_class": "Chef::Role",
   "default_attributes": {
-          },
+      "mongodb3" : {
+		"package" : {
+			"version" : "<mongo_version>"
+		}
+	  }
+  },
   "override_attributes": {
   },
   "chef_type": "role",

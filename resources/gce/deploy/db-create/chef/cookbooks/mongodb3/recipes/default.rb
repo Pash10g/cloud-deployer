@@ -24,8 +24,9 @@ install_package = %w(mongodb-org-server mongodb-org-shell mongodb-org-tools)
 
 install_package.each do |pkg|
   package pkg do
-    #version node['mongodb3']['package']['version']
+    version node['mongodb3']['package']['version']
     action :install
+    options '--force-yes'
   end
 end
 

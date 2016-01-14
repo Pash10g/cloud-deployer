@@ -4,10 +4,13 @@
   "json_class": "Chef::Role",
   "default_attributes": {
     "mongodb3" : {
+      "package" : {
+		"version" : "<mongo_version>"
+	  },
       "config" : {
         "mongod" : {
           "replication" : {
-            "replSetName" : "replset-1"
+            "replSetName" : "<shard_repl_set_name>"
           },
 	  "storage" : {
             "dbPath" : "/var/lib/mongodb/wiredTiger",

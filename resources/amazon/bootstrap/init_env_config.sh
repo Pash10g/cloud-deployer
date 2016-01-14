@@ -15,6 +15,10 @@ cp  /root/.juju/environments.yaml  /root/.juju/environments.yaml_old
 
 #juju generate-config -f || { echo "ERROR Failed to create juju environments.yaml file" ; exit 2 }
 
+if [ -d /root/.juju/environments ]; then
+	rm /root/.juju/environments/<env_name>*
+fi
+
 echo "" > /root/.juju/environments.yaml
 
 echo "default: <env_name>" >> /root/.juju/environments.yaml
