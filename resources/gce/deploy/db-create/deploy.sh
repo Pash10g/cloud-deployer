@@ -53,24 +53,20 @@ echo "" > /tmp/<env_name>-mongo-conf.yaml
 
 for i in {1..<configsvr_number>}
 do
-#	echo "configsvr${i}: " >> /tmp/<env_name>-mongo-conf.yaml
-#	echo "  replicaset : configsvr " >> /tmp/<env_name>-mongo-conf.yaml
-#	echo "  config_server_port : <configsvr_port>" >> /tmp/<env_name>-mongo-conf.yaml
-#	echo "  extra_daemon_options: --configsvr" >> /tmp/<env_name>-mongo-conf.yaml
-	#juju deploy mongodb  "configsvr${i}" -n<configsvr_repl_set_number>  --constraints "mem=<configsvr_mem_mb> cpu-cores=<configsvr_cpu_core>" --config /tmp/<env_name>-mongo-conf.yaml || { echo "Failed to deploy mongodb configsvr '-n <configsvr_repl_set_number>' "; exit 2; }
+
 	echo "Starting deploy configsvr${i}"
 	deploy_vm "mem=<configsvr_mem_mb> cpu-cores=<configsvr_cpu_core>"  machine_no
 	fqdn=$(juju status --format tabular | grep machine-${machine_no} | awk '{print $4}')
 	echo "configsvr${i}: " >> /tmp/<env_name>-mongo-conf.yaml
 	echo "  replicaset : <configsvr_repl_name> " >> /tmp/<env_name>-mongo-conf.yaml
 	echo "  config_server_port : <configsvr_port>" >> /tmp/<env_name>-mongo-conf.yaml
-	echo "  machine: ${machine}" >> /tmp/<env_name>-mongo-conf.yaml
+	echo "  machine: machine-${machine_no}" >> /tmp/<env_name>-mongo-conf.yaml
 	echo "  FQDN: ${fqdn} " >> /tmp/<env_name>-mongo-conf.yaml
 	
-	juju deploy /root/.juju/charms/trusty/deploy-node "mongos${i}" --series trusty --to $machine_no 
+	juju deploy /root/.juju/charms/trusty/deploy-node "configsvr${i}" --series trusty --to $machine_no 
 
-	echo "Exposing mongos${1}"
-	juju expose "mongos${i}"
+	echo "Exposing configsvr${1}"
+	juju expose "configsvr${i}"
 	sleep 30s
 	echo " Starting chef add node : 'role[configsvr]' on host : ${fqdn}"
 	knife bootstrap  ${fqdn}  --ssh-user ubuntu --sudo -r 'role[configsvr]' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine} role[configsvr]  "; exit 2; }
@@ -86,8 +82,8 @@ do
         deploy_vm "mem=<mongos_mem_mb> cpu-cores=<mongos_cpu_core>" machine_no
 		fqdn=$(juju status --format tabular | grep machine-${machine_no} | awk '{print $4}')
         echo "mongos${i}: " >> /tmp/<env_name>-mongo-conf.yaml
-        echo "  config_server_port : <mongos_port>" >> /tmp/<env_name>-mongo-conf.yaml
-        echo "  machine: ${machine_mongos}" >> /tmp/<env_name>-mongo-conf.yaml
+        echo "  mongos_port : <mongos_port>" >> /tmp/<env_name>-mongo-conf.yaml
+        echo "  machine: machine-${machine_no}" >> /tmp/<env_name>-mongo-conf.yaml
         echo "  FQDN: ${fqdn} " >> /tmp/<env_name>-mongo-conf.yaml
 		juju deploy /root/.juju/charms/trusty/deploy-node "mongos${i}" --series trusty --to $machine_no 
 	
@@ -110,8 +106,9 @@ do
 	deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core>" machine_no
 	fqdn=$(juju status --format tabular | grep machine-${machine_no} | awk '{print $4}')
 	 echo "shard${i}: " >> /tmp/<env_name>-mongo-conf.yaml
-	echo "  config_server_port : <shard_port>" >> /tmp/<env_name>-mongo-conf.yaml
-	echo "  machine: ${machine_shard}" >> /tmp/<env_name>-mongo-conf.yaml
+	 echo "  shard_replica_set_name : <shard_repl_set_name>" >> /tmp/<env_name>-mongo-conf.yaml
+	echo "  shard_port : <shard_port>" >> /tmp/<env_name>-mongo-conf.yaml
+	echo "  machine: machine-${machine_no}" >> /tmp/<env_name>-mongo-conf.yaml
 	echo "  FQDN: ${fqdn} " >> /tmp/<env_name>-mongo-conf.yaml
 	juju deploy /root/.juju/charms/trusty/deploy-node "shard${i}" --series trusty --to $machine_no 
 
