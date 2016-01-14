@@ -24,9 +24,9 @@ destroy-env - drops all machines and services from the environment
 add-shard - adds shard and its replicas to an exisiting cluster.
 
 The mode : 
-x  - using a property file located under config/<vendor>/properties.conf
-  - each file has the default values and the Mandatory values that needs to be provided (most of them are account oriented)
-i - interactive mode where user input for all properties required
+- x  - using a property file located under config/<vendor>/properties.conf
+   * each file has the default values and the Mandatory values that needs to be provided (most of them are account oriented)
+- i - interactive mode where user input for all properties required
 
 Not specifiying mode means that you need to specify any needed input  via ENVIRONMENT VARAIBLES (see config/<vendor>/properties.conf for the list)
 
