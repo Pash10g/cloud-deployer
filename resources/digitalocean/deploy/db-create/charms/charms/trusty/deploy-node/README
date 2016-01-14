@@ -1,0 +1,7 @@
+#Overview
+Installs a node for the cloud-deployer .
+Opens neccessary ports and configuration for chef boot straping
+
+# Install
+juju deploy deploy-node 
+juju deploy deploy-node --to 0
