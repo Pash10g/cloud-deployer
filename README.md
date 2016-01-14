@@ -18,10 +18,10 @@ amazon - AWS
 gce - Google Cloud
 
 The steps :
-init-bootstrap - lunches juju and chef server on the desired cloud.
-deploy - deploys the mongodb cluster
-destroy-env - drops all machines and services from the environment
-add-shard - adds shard and its replicas to an exisiting cluster.
+- init-bootstrap - lunches juju and chef server on the desired cloud.
+- deploy - deploys the mongodb cluster
+- destroy-env - drops all machines and services from the environment
+- add-shard - adds shard and its replicas to an exisiting cluster.
 
 The mode : 
 - x  - using a property file located under config/<vendor>/properties.conf
