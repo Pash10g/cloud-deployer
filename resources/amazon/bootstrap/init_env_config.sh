@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+#set -e
 
 if ! which juju 2>/dev/null; then
 	sudo add-apt-repository ppa:juju/stable
