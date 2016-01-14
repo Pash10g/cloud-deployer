@@ -40,15 +40,16 @@ end
 config_nodes = search(:node, "role:configsvr")
 config_rs_delim = ""
 conf_repl_set_name = config_nodes.first['mongodb3']['mongod']['replication']['replSetName']
-if conf_repl_set_name = 'none' or  config_nodes.first['mongodb3']['package']['version'] <= "3.2.0" 
+if conf_repl_set_name = 'none' or  config_nodes.first['mongodb3']['package']['version'] <= "3.2.0" or conf_repl_set_name.nil? 
 	delim = ""
 else
-	delim = "#{config_nodes.first['mongodb3']['mongod']['replication']['replSetName']}/"	
+	delim = "#{conf_repl_set_name}/"	
 	config_rs_init_clause = ""
 	id_no = 0
 	config_nodes.each do |cnode|
+		
+		config_rs_init_clause =  config_rs_init_clause + config_rs_delim + "{ _id: #{id_no}, host: \"#{cnode["ipaddress"]}:#{cnode['mongodb3']['config']['mongod']['net']['port']}\" }"
 		id_no = id_no + 1
-		config_rs_init_clause =  config_rs_init_clause + config_rs_delim + "{ _id: 0, host: \"#{cnode["ipaddress"]}:#{cnode['mongodb3']['config']['mongod']['net']['port']}\" }"
 	end 
 	
 	execute "intiate replset configsvr #{config_nodes.first['ipaddress']}" do
