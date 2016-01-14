@@ -9,13 +9,13 @@ It utilizes juju and chef technologies in order to deploy and configure the mach
 Currently the workstation that runs the client side can be only Ubuntu (OS X is on the way).
 
 #Usage :
-the main directory has a main run file called : run_deployer.py.
+The main directory has a main run file called : run_deployer.py.
 
 ./run_deployer.py [-h] [-m MODE ] -s STEP -V VENDOR.
 
 The vendors is one of the supported vnedors :
-amazon - AWS
-gce - Google Cloud
+- amazon - AWS (see : https://jujucharms.com/docs/stable/config-aws for input configuration)
+- gce - Google Cloud (see : https://jujucharms.com/docs/stable/config-gce for input configuration)
 
 The steps :
 - init-bootstrap - lunches juju and chef server on the desired cloud.
