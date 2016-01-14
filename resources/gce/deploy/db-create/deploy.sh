@@ -1,11 +1,12 @@
 #!/bin/bash
 
+set -e
+
 function deploy_vm {
 	constraints=$1
 	echo " Lunching machine  constraints : ${constraints}"
 	export machine_no=$(juju machine add --constraints "$constraints" 2>&1 | awk '{print $3}') #|| {echo "failed to init machine constraints $constraints "; exit 2}
 	echo "Machine successfuly lunched , machine-no : ${machine_no} "
-	#machine_no="13"
 	sleep 1m
 	export machine_status="$(juju status --format tabular | grep machine-${machine_no} | awk '{print $2}')"
 	while [ "$machine_status" =  "pending" ]; do
@@ -42,15 +43,6 @@ cd $back_dir
 
 echo "" > /tmp/<env_name>-mongo-conf.yaml
 
-#for i in {1..<shard_number>} 
-#do
-#	echo "shard${i} :" >> /tmp/<env_name>-mongo-conf.yaml
-#	echo "  replicaset : <shard_repl_set_name>_${i}" >> /tmp/<env_name>-mongo-conf.yaml
-#	echo "  port : <mongos_port>" >> /tmp/<env_name>-mongo-conf.yaml
-
-#done
-
-
 for i in {1..<configsvr_number>}
 do
 
@@ -74,7 +66,7 @@ do
 	echo " Successfully finished chef install 'role[configsvr]' on host : ${fqdn}"
 done
 
-#juju set configsvr config_server_port=<configsvr_port> port=<configsvr_port> extra_daemon_options=" --configsvr " || { echo "Failed to set  mongodb configsvr 'config_server_port=<configsvr_port> port=<configsvr_port>' "; exit 2; }
+
 
 for i in {1..<mongos_number>} 
 do
@@ -96,12 +88,11 @@ do
 	echo " Successfully finished chef install 'role[mongos]' on host : ${fqdn}"
 done
 
-#juju set mongos mongos_port=<mongos_port>  || { echo "Failed to set  mongodb mongos 'mongos_port=<mongos_port> port=<mongos_port>' "; exit 2; } 
+
 
 for i in {1..<shard_number>} 
 do
-#	juju deploy mongodb  "shard${i}" -n<shard_repl_set_number> --constraints "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core>" --config /tmp/<env_name>-mongo-conf.yaml  || { echo "Failed to deploy mongodb shard${i} '-n <shard_repl_set_number>' "; exit 2; }
-	#juju set "shard${i}" replicaset="<shard_repl_set_name>_${i}"  port=<mongos_port> || { echo "Failed to set  mongodb shard${i} 'replicaset=<shard_repl_set_name>_${i} port=<mongos_port>' "; exit 2; } 
+	
 	echo " Starting deploy of shard${i}"
 	deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core>" machine_no
 	fqdn=$(juju status --format tabular | grep machine-${machine_no} | awk '{print $4}')
@@ -121,3 +112,7 @@ do
 	echo " Successfully finished chef install 'role[shard]'  on host : ${fqdn}"
 done
 
+echo "########################################################################"
+echo "# For deployed cluster info please see /tmp/<env_name>-mongo-conf.yaml "
+echo "# or run : juju status"
+echo "########################################################################"

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 FULLPATH_SCRIPT=`readlink -f "$0"`
 export BASE_DIR=`dirname $FULLPATH_SCRIPT`
 
@@ -12,8 +14,8 @@ sleep 1m
 export machine_status="$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $2}')"
 
 while [ "$machine_status" =  "pending" ]; do
-#	echo "Waiting for machine to start... (current : $machine_status)"
-export	machine_status="$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $2}')"
+	echo "Waiting for machine to start... (current : $machine_status)"
+	export	machine_status="$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $2}')"
 	sleep 20s
 
 done
@@ -28,6 +30,14 @@ juju scp $BASE_DIR/install_chef_server.sh $machine_no:/tmp/  || { echo "ERROR Co
 
 echo "Running install script for chef server on $bootstarp_node ... Can take up to 20m0s"
 juju run "sudo /tmp/install_chef_server.sh https://web-dl.packagecloud.io/chef/stable/packages/ubuntu/trusty/chef-server-core_12.3.1-1_amd64.deb admin mongodb123  2>&1" --machine ${machine_no} --timeout "20m0s" || { echo "ERROR Bottstraping chef server install for <env_name> env "; exit 2; }
+
+echo "Expose needed ports for chef server $bootstrap_node..."
+juju deploy /root/.juju/charms/trusty/deploy-node chef-server --series trusty --to $machine_no 
+
+juju expose chef-server
+
+sleep 50s
+
 
 juju scp $machine_no:/tmp/\*.pem /root/.chef/  || { echo "ERROR Copying chef server credentials to /root/.chef/ "; exit 2; }
 

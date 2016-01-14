@@ -13,8 +13,8 @@ sleep 1m
 export machine_status="$(juju status --format tabular | grep machine-${machine_no} | awk '{print $2}')"
 
 while [ "$machine_status" =  "pending" ]; do
-#	echo "Waiting for machine to start... (current : $machine_status)"
-export	machine_status="$(juju status --format tabular | grep machine-$machine_no | awk '{print $2}')"
+	echo "Waiting for machine to start... (current : $machine_status)"
+	export	machine_status="$(juju status --format tabular | grep machine-$machine_no | awk '{print $2}')"
 	sleep 20s
 
 done
