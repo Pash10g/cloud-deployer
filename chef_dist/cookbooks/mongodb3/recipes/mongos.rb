@@ -45,18 +45,22 @@ if conf_repl_set_name = 'none' or  config_nodes.first['mongodb3']['package']['ve
 else
 	delim = "#{config_nodes.first['mongodb3']['mongod']['replication']['replSetName']}/"	
 	config_rs_init_clause = ""
+	id_no = 0
 	config_nodes.each do |cnode|
-		config_rs_init_clause =  config_rs_init_clause + config_rs_delim + "{ _id: 0, host: \"<host1>:<port1>\" }"
+		id_no = id_no + 1
+		config_rs_init_clause =  config_rs_init_clause + config_rs_delim + "{ _id: 0, host: \"#{cnode["ipaddress"]}:#{cnode['mongodb3']['config']['mongod']['net']['port']}\" }"
 	end 
+	
+	execute "intiate replset configsvr #{config_nodes.first['ipaddress']}" do
+		command "mongo --host #{config_nodes.first["ipaddress"]}:#{config_nodes.first['mongodb3']['config']['mongod']['net']['port']} <<EOF
+		rs.initiate({_id: \"#{conf_repl_set_name}\", configsvr: true, members: [#{config_rs_init_clause}]} )
+		EOF>>"
+		user node['mongodb3']['user']
+		not_if "echo 'rs.status()' | mongo --host #{config_nodes.first["ipaddress"]}:#{config_nodes.first['mongodb3']['config']['mongod']['net']['port']} | grep #{config_nodes.first["ipaddress"]}" 
+	end
+
 end
 
-execute "intiate replset configsvr #{config_nodes.first['ipaddress']}" do
-command "mongo --host #{config_nodes.first["ipaddress"]}:#{config_nodes.first['mongodb3']['config']['mongod']['net']['port']} <<EOF
-rs.initiate({_id: \"#{}\", configsvr: true, members: []} )
-EOF>>"
-user node['mongodb3']['user']
-not_if "echo 'rs.status()' | mongo --host #{config_nodes.first["ipaddress"]}:#{config_nodes.first['mongodb3']['config']['mongod']['net']['port']} | grep #{config_nodes.first["ipaddress"]}" 
-end
 
 config_servers = ""
 
@@ -99,7 +103,7 @@ end
 execute 'mongos start' do
 	command "mongos --config /etc/mongos.conf --fork"
 	user node['mongodb3']['user']
-	not_if 'ps -ef | grep mongos | grep -v "grep"'
+	not_if 'ps -ef | grep "mongos --config /etc/mongos.conf --fork" | grep -v "grep"'
 end
 
 shard_nodes =  search(:node, "role:shard")
