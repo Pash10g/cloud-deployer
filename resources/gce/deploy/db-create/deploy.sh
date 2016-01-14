@@ -71,12 +71,9 @@ do
 
 	echo "Exposing mongos${1}"
 	juju expose "mongos${i}"
+	sleep 30s
 	echo " Starting chef add node : 'role[configsvr]' on host : ${fqdn}"
 	knife bootstrap  ${fqdn}  --ssh-user ubuntu --sudo -r 'role[configsvr]' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine} role[configsvr]  "; exit 2; }
-	
-	juju deploy /root/.juju/charms/trusty/deploy-node "configsvr${i}" --series trusty --to $machine_no 
-
-	juju expose "configsvr${i}"
 	
 	echo " Successfully finished chef install 'role[configsvr]' on host : ${fqdn}"
 done
@@ -96,6 +93,7 @@ do
 	
 		echo "Exposing mongos${1}"
 		juju expose "mongos${i}"
+		sleep 30s
 	echo " Starting chef add node : 'role[mongos]' on host : ${fqdn}"
         knife bootstrap  $fqdn  --ssh-user ubuntu --sudo -r 'role[mongos]' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_mongos} role[mongos]  "; exit 2; }
 
@@ -119,6 +117,7 @@ do
 
 	echo "Exposing shard${i}"
 	juju expose "shard${i}"
+	sleep 30s
 	 echo " Starting chef add node : 'role[shard]' on host : ${fqdn}"	
 	knife bootstrap  ${fqdn} --ssh-user ubuntu --sudo -r 'role[shard]' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_shard} role[shard]  "; exit 2; }
 

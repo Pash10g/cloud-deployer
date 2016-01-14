@@ -35,6 +35,8 @@ juju deploy /root/.juju/charms/trusty/deploy-node chef-server --series trusty --
 
 juju expose chef-server
 
+sleep 50s
+
 echo "Fetching keys from chef server..."
 juju scp $machine_no:/tmp/\*.pem /root/.chef/  || { echo "ERROR Copying chef server credentials to /root/.chef/ "; exit 2; }
 
