@@ -40,7 +40,7 @@ end
 config_nodes = search(:node, "role:configsvr")
 config_rs_delim = ""
 conf_repl_set_name = config_nodes.first['mongodb3']['config']['mongod']['replication']['replSetName']
-if conf_repl_set_name == 'none' or  config_nodes.first['mongodb3']['package']['version'] <= "3.2.0" or conf_repl_set_name.nil? 
+if conf_repl_set_name == 'none' or  config_nodes.first['mongodb3']['package']['version'].to_s < "3.2.0" or conf_repl_set_name.nil? 
 	delim = ""
 else
 	delim = "#{conf_repl_set_name}/"	
@@ -49,15 +49,16 @@ else
 	config_nodes.each do |cnode|
 		
 		config_rs_init_clause =  config_rs_init_clause + config_rs_delim + "{ _id: #{id_no}, host: \"#{cnode["ipaddress"]}:#{cnode['mongodb3']['config']['mongod']['net']['port']}\" }"
+		config_rs_delim = ","
 		id_no = id_no + 1
 	end 
 	
-	execute "intiate replset configsvr #{config_nodes.first['ipaddress']}" do
+	execute "intiate replset configsvr " do
 		command "mongo --host #{config_nodes.first["ipaddress"]}:#{config_nodes.first['mongodb3']['config']['mongod']['net']['port']} <<EOF
 		rs.initiate({_id: \"#{conf_repl_set_name}\", configsvr: true, members: [#{config_rs_init_clause}]} )
 		EOF>>"
 		user node['mongodb3']['user']
-		not_if "echo 'rs.status()' | mongo --host #{config_nodes.first["ipaddress"]}:#{config_nodes.first['mongodb3']['config']['mongod']['net']['port']} | grep #{config_nodes.first["ipaddress"]}" 
+		not_if "echo 'rs.status()' | mongo --host  #{config_nodes.first["ipaddress"]}:#{config_nodes.first['mongodb3']['config']['mongod']['net']['port']} --quiet | grep #{config_nodes.first["ipaddress"]}" 
 	end
 
 end
@@ -67,7 +68,7 @@ config_servers = ""
 
 config_nodes.each do |cnode|
 	
-	config_servers = config_servers + "#{delim}" + cnode['ipaddress'] + ":" + cnode['mongodb3']['config']['mongod']['net']['port']
+	config_servers = config_servers + "#{delim}" + cnode['ipaddress'] + ":" + cnode['mongodb3']['config']['mongod']['net']['port'].to_s
 	delim = ","
 
 end
@@ -116,7 +117,7 @@ shard_nodes.each do |cnode|
 		sh.addShard(\"#{cnode["ipaddress"]}:#{cnode['mongodb3']['config']['mongod']['net']['port']}\")
 		EOF>>"
         user node['mongodb3']['user']
-        not_if "echo 'sh.status()' | mongo --host localhost:#{node['mongodb3']['config']['mongod']['net']['port']} | grep #{cnode["ipaddress"]}" 
+        not_if "echo 'sh.status()' | mongo --host localhost:#{node['mongodb3']['config']['mongod']['net']['port']} --quiet | grep #{cnode["ipaddress"]}" 
    end
 
 
