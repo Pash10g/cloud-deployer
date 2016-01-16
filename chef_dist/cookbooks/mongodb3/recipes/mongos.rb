@@ -39,7 +39,7 @@ end
 # Create mongodb configsvr configuration 
 config_nodes = search(:node, "role:configsvr")
 config_rs_delim = ""
-conf_repl_set_name = config_nodes.first['mongodb3']['mongod']['replication']['replSetName']
+conf_repl_set_name = config_nodes.first['mongodb3']['config']['mongod']['replication']['replSetName']
 if conf_repl_set_name = 'none' or  config_nodes.first['mongodb3']['package']['version'] <= "3.2.0" or conf_repl_set_name.nil? 
 	delim = ""
 else
