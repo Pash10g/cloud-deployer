@@ -9,6 +9,9 @@
 	  },
       "config" : {
         "mongod" : {
+		  "net" : {
+		    "port" : <shard_port>
+		  },
           "replication" : {
             "replSetName" : "<shard_repl_set_name>"
           },
