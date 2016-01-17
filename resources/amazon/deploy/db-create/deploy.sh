@@ -41,7 +41,7 @@ knife cookbook upload --all || { echo "ERROR While chef upload cookbooks"; exit 
 knife upload roles ||  { echo "ERROR While chef upload roles"; exit 2; }
 cd $back_dir
 
-echo "" > /tmp/mongo-conf.yaml
+echo "" > /tmp/<env_name>-mongo-conf.yaml
 
 
 for i in {1..<configsvr_number>}
@@ -51,11 +51,11 @@ do
 	deploy_vm "cpu-cores=<configsvr_cpu_core> mem=<configsvr_mem_mb>" machine_no
 	machine=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')
 	fqdn=$(juju status --format tabular | grep ${machine} | awk '{print $3}')
-	echo "configsvr${i}: " >> /tmp/mongo-conf.yaml
-	echo "  replicaset : <configsvr_repl_name> " >> /tmp/mongo-conf.yaml
-	echo "  config_server_port : <configsvr_port>" >> /tmp/mongo-conf.yaml
-	echo "  machine: ${machine}" >> /tmp/mongo-conf.yaml
-	echo "  FQDN: ${fqdn} " >> /tmp/mongo-conf.yaml
+	echo "configsvr${i}: " >> /tmp/<env_name>-mongo-conf.yaml
+	echo "  replicaset : <configsvr_repl_name> " >> /tmp/<env_name>-mongo-conf.yaml
+	echo "  config_server_port : <configsvr_port>" >> /tmp/<env_name>-mongo-conf.yaml
+	echo "  machine: ${machine}" >> /tmp/<env_name>-mongo-conf.yaml
+	echo "  FQDN: ${fqdn} " >> /tmp/<env_name>-mongo-conf.yaml
 		
 	juju deploy /root/.juju/charms/trusty/deploy-node "configsvr${i}" --series trusty --to $machine_no 
 
