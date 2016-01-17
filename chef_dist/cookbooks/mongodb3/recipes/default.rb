@@ -60,10 +60,42 @@ template node['mongodb3']['mongod']['config_file'] do
   helpers Mongodb3Helper
 end
 
+
+
 # Start the mongod service
 service 'mongod' do
   supports :start => true, :stop => true, :restart => true, :status => true
-  action :enable
+  action [:enable,:start]
   subscribes :restart, "template[#{node['mongodb3']['mongod']['config_file']}]", :delayed
   subscribes :restart, "template[#{node['mongodb3']['config']['mongod']['security']['keyFile']}", :delayed
+end
+
+sleep(60)
+
+# Setup replica initiation
+repl_set_name = node['mongodb3']['config']['mongod']['replication']['replSetName']
+if not (repl_set_name == 'none' or repl_set_name.nil?) and node.role?('shard')
+    execute "add initial replicaset for shard #{node['ipaddress']}" do
+  		command "mongo --host localhost:#{node['mongodb3']['config']['mongod']['net']['port']} <<EOF
+  		rs.initiate()
+  		EOF>>"
+      user node['mongodb3']['user']
+      not_if "echo 'rs.status()' | mongo --host localhost:#{node['mongodb3']['config']['mongod']['net']['port']} --quiet | grep #{node["ipaddress"]}" 
+      retries 3
+    end
+end
+
+# Setup Replica nodes
+if not (repl_set_name == 'none' or repl_set_name.nil? ) and node.role?('shard')
+  replica_nodes =  search(:node, "role:replicaset and replSetName:#{repl_set_name}")
+  replica_nodes.each do |cnode|
+      execute "add replicaset #{cnode['ipaddress']}" do
+    		command "mongo --host localhost:#{node['mongodb3']['config']['mongod']['net']['port']} <<EOF
+    		rs.add(\"#{cnode["ipaddress"]}:#{cnode['mongodb3']['config']['mongod']['net']['port']}\")
+    		EOF>>"
+        user node['mongodb3']['user']
+        not_if "echo 'rs.status()' | mongo --host localhost:#{node['mongodb3']['config']['mongod']['net']['port']} --quiet | grep #{cnode["ipaddress"]}" 
+        retries 3
+      end
+  end
 end
