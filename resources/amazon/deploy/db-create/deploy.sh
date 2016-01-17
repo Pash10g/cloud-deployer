@@ -48,7 +48,7 @@ for i in {1..<configsvr_number>}
 do
 
 	echo "Starting deploy configsvr${i}"
-	deploy_vm "cpu-cores=<configsvr_cpu_core>" machine_no
+	deploy_vm "cpu-cores=<configsvr_cpu_core> mem=<configsvr_mem_mb>" machine_no
 	machine=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')
 	fqdn=$(juju status --format tabular | grep ${machine} | awk '{print $3}')
 	echo "configsvr${i}: " >> /tmp/mongo-conf.yaml
