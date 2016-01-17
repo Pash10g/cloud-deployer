@@ -113,3 +113,8 @@ do
 	echo " Successfully finished chef install 'role[shard]'  on host : ${fqdn}"
 done
 
+
+echo "########################################################################"
+echo "# For deployed cluster info please see /tmp/<env_name>-mongo-conf.yaml "
+echo "# or run : juju status"
+echo "########################################################################"
