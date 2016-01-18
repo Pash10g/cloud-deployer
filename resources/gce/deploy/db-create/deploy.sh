@@ -107,7 +107,7 @@ do
 	juju expose "shard${i}"
 	sleep 30s
 	echo " Starting chef add node : 'role[shard]' on host : ${fqdn}"	
-	 knife bootstrap  ${fqdn} --ssh-user ubuntu --sudo -r 'role[shard]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_shard${i}\" } } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${fqdn} role[shard]  "; exit 2; }
+	 knife bootstrap  ${fqdn} --ssh-user ubuntu --sudo -r 'role[shard]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_shard${i}\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${fqdn} role[shard]  "; exit 2; }
 
 	echo " Successfully finished chef install 'role[shard]'  on host : ${fqdn}"
 	for j in {1..<shard_repl_number>} 
@@ -126,7 +126,7 @@ do
 		juju expose " shard_replicaset${j}"
 		sleep 30s
 		echo " Starting chef add node : 'role[replicaset]' on host : ${fqdn}"	
-		 knife bootstrap  ${fqdn} --ssh-user ubuntu --sudo -r 'role[replicaset]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_shard${i}\" } } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${fqdn} role[replicaset]  "; exit 2; }
+		 knife bootstrap  ${fqdn} --ssh-user ubuntu --sudo -r 'role[replicaset]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_shard${i}\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${fqdn} role[replicaset]  "; exit 2; }
 
 		echo " Successfully finished chef install 'role[replicaset]'  on host : ${fqdn}"
 	done
