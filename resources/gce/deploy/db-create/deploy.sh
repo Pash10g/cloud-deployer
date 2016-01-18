@@ -83,7 +83,7 @@ do
 		juju expose "mongos${i}"
 		sleep 30s
 	echo " Starting chef add node : 'role[mongos]' on host : ${fqdn}"
-        knife bootstrap  $fqdn  --ssh-user ubuntu --sudo -r 'role[mongos]' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_mongos} role[mongos]  "; exit 2; }
+        knife bootstrap  $fqdn  --ssh-user ubuntu --sudo -r 'role[mongos]' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${fqdn} role[mongos]  "; exit 2; }
 
 	echo " Successfully finished chef install 'role[mongos]' on host : ${fqdn}"
 done
@@ -97,7 +97,7 @@ do
 	deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core>" machine_no
 	fqdn=$(juju status --format tabular | grep machine-${machine_no} | awk '{print $4}')
 	 echo "shard${i}: " >> /tmp/<env_name>-mongo-conf.yaml
-	 echo "  shard_replica_set_name : <shard_repl_set_name>" >> /tmp/<env_name>-mongo-conf.yaml
+	 echo "  shard_replica_set_name : <shard_repl_set_name>_shard${i}" >> /tmp/<env_name>-mongo-conf.yaml
 	echo "  shard_port : <shard_port>" >> /tmp/<env_name>-mongo-conf.yaml
 	echo "  machine: machine-${machine_no}" >> /tmp/<env_name>-mongo-conf.yaml
 	echo "  FQDN: ${fqdn} " >> /tmp/<env_name>-mongo-conf.yaml
@@ -106,10 +106,30 @@ do
 	echo "Exposing shard${i}"
 	juju expose "shard${i}"
 	sleep 30s
-	 echo " Starting chef add node : 'role[shard]' on host : ${fqdn}"	
-	knife bootstrap  ${fqdn} --ssh-user ubuntu --sudo -r 'role[shard]' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_shard} role[shard]  "; exit 2; }
+	echo " Starting chef add node : 'role[shard]' on host : ${fqdn}"	
+	eval knife bootstrap  ${fqdn} --ssh-user ubuntu --sudo -r 'role[shard]' -j '{ "mongodb3" : { "config" : { "mongod" : {  "replication" : {  "replSetName" : "<shard_repl_set_name>_shard${i}" } } } } } }' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${fqdn} role[shard]  "; exit 2; }
 
 	echo " Successfully finished chef install 'role[shard]'  on host : ${fqdn}"
+	for j in {1..<shard_repl_number>} 
+	do
+		echo " Starting deploy of shard_replicaset{$j}"
+		deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core>" machine_no
+		fqdn=$(juju status --format tabular | grep machine-${machine_no} | awk '{print $4}')
+		echo "  shard_replicaset${j}: " >> /tmp/<env_name>-mongo-conf.yaml
+ 		echo "    shard_replica_set_name : <shard_repl_set_name>_shard${i}" >> /tmp/<env_name>-mongo-conf.yaml
+		echo "    shard_replicaset_port : <shard_port>" >> /tmp/<env_name>-mongo-conf.yaml
+		echo "    machine: machine-${machine_no}" >> /tmp/<env_name>-mongo-conf.yaml
+		echo "    FQDN: ${fqdn} " >> /tmp/<env_name>-mongo-conf.yaml
+		juju deploy /root/.juju/charms/trusty/deploy-node " shard_replicaset{$j}" --series trusty --to $machine_no 
+
+		echo "Exposing  shard_replicaset{$j}"
+		juju expose " shard_replicaset{$j}"
+		sleep 30s
+		echo " Starting chef add node : 'role[replicaset]' on host : ${fqdn}"	
+		eval knife bootstrap  ${fqdn} --ssh-user ubuntu --sudo -r 'role[replicaset]' -j '{ "mongodb3" : { "config" : { "mongod" : {  "replication" : {  "replSetName" : "<shard_repl_set_name>_shard${i}}" } } } } }' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${fqdn} role[replicaset]  "; exit 2; }
+
+	echo " Successfully finished chef install 'role[shard]'  on host : ${fqdn}"
+	done
 done
 
 echo "########################################################################"
