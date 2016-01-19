@@ -6,6 +6,7 @@
 <shard_repl_set_name>=SHARD_REPL_SET_NAME
 <shard_repl_set_number>=SHARD_REPL_SET_NUMBER
 <shard_number>=SHARD_NUMBER
+<shard_repl_number>=SHARD_REPL_NUMBER
 <configsvr_cpu_core>=CONFIGSVR_CPU_CORE
 <configsvr_mem_mb>=CONFIGSVR_MEM_MB
 <configsvr_data_disk>=CONFIGSVR_DATA_DISK
