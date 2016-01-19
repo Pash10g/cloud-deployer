@@ -87,7 +87,7 @@ end
 
 # Setup Replica nodes
 if not (repl_set_name == 'none' or repl_set_name.nil? ) and node.role?('shard')
-  replica_nodes =  search(:node, %Q{role:replicaset and replSetName:"#{repl_set_name}"})
+  replica_nodes =  search(:node, %Q{role:replicaset AND replSetName:"#{repl_set_name}"})
   replica_nodes.each do |cnode|
       execute "add replicaset #{cnode['ipaddress']}" do
     		command "mongo --host localhost:#{node['mongodb3']['config']['mongod']['net']['port']} <<EOF
