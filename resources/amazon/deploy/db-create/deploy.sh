@@ -65,6 +65,7 @@ do
 		sleep 30s
 	else
 		echo "configsvr${i} component already exist re-bootstraping..."
+		fqdn=$(juju status --format tabular | grep "configsvr${i}/" | awk '{print $7}') 
 	fi
 	echo " Starting chef add node : 'role[configsvr]' on host : ${fqdn}"
 	knife bootstrap  ${fqdn}  --ssh-user ubuntu --sudo -r 'role[configsvr]' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine} role[configsvr]  "; exit 2; }
@@ -92,6 +93,7 @@ do
 		
 	else
 		echo "mongos${i} component already exist re-bootstraping..."
+		fqdn=$(juju status --format tabular | grep "mongos${i}/" | awk '{print $7}') 
 	fi
 	echo " Starting chef add node : 'role[mongos]' on host : ${fqdn}"
         knife bootstrap  $fqdn  --ssh-user ubuntu --sudo -r 'role[mongos]' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_mongos} role[mongos]  "; exit 2; }
@@ -120,6 +122,7 @@ do
 		sleep 30s
 	else
 		echo "shard${i} component already exist re-bootstraping..."
+		fqdn=$(juju status --format tabular | grep "shard${i}/" | awk '{print $7}') 
 	fi	
 	echo " Starting chef add node : 'role[shard]' on host : ${fqdn}"	
         knife bootstrap  ${fqdn} --ssh-user ubuntu --sudo -r 'role[shard]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_shard${i}\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_shard} role[shard]  "; exit 2; }
@@ -143,7 +146,8 @@ do
 			juju expose "shard${i}-replicaset${j}"
 			sleep 30s
 		else
-			echo "shard${i}-replicaset${j} component already exist re-bootstraping..."	
+			echo "shard${i}-replicaset${j} component already exist re-bootstraping..."
+			fqdn=$(juju status --format tabular | grep "shard${i}-replicaset${j}/" | awk '{print $7}') 
 		fi
 		echo " Starting chef add node : 'role[replicaset]' on host : ${fqdn}"	
 		knife bootstrap  ${fqdn} --ssh-user ubuntu --sudo -r 'role[replicaset]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_shard${i}\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${fqdn} role[replicaset]  "; exit 2; }
