@@ -75,9 +75,11 @@ sleep(60)
 # Setup replica initiation
 repl_set_name = node['mongodb3']['config']['mongod']['replication']['replSetName']
 if not (repl_set_name == 'none' or repl_set_name.nil?) and node.role?('shard')
+    id_no = 0
+    config_rs_init_clause = "{ _id: #{id_no}, host: \"#{node["ipaddress"]}:#{node['mongodb3']['config']['mongod']['net']['port']}\" 
     execute "add initial replicaset for shard #{node['ipaddress']}" do
   		command "mongo --host localhost:#{node['mongodb3']['config']['mongod']['net']['port']} <<EOF
-  		rs.initiate()
+  		rs.initiate({_id: \"#{repl_set_name}\", members: [#{config_rs_init_clause}]} )
   		EOF>>"
       user node['mongodb3']['user']
       not_if "echo 'rs.status()' | mongo --host localhost:#{node['mongodb3']['config']['mongod']['net']['port']} --quiet | grep #{node["ipaddress"]}" 
