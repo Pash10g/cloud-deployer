@@ -56,7 +56,7 @@ template '/etc/init.d/disable-transparent-hugepages' do
   mode 755
 end
 
-execute "add replicaset #{cnode['ipaddress']}" do
+execute "stup huge pages init.d" do
     		command "sudo update-rc.d disable-transparent-hugepages defaults;/etc/init.d/disable-transparent-hugepages start"
     		not_if "cat /sys/kernel/mm/transparent_hugepage/enabled | grep 'always madvise [never]' "
 end
