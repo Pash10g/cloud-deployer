@@ -50,6 +50,18 @@ unless node['mongodb3']['config']['key_file_content'].to_s.empty?
   end
 end
 
+# Disable transperent huge pages 
+template '/etc/init.d/disable-transparent-hugepages' do
+  source 'disable-transparent-hugepages.erb'
+  mode 755
+end
+
+execute "add replicaset #{cnode['ipaddress']}" do
+    		command "sudo update-rc.d disable-transparent-hugepages defaults;/etc/init.d/disable-transparent-hugepages start"
+    		not_if "cat /sys/kernel/mm/transparent_hugepage/enabled | grep 'always madvise [never]' "
+end
+
+
 # Update the mongodb config file
 template node['mongodb3']['mongod']['config_file'] do
   source 'mongodb.conf.erb'
