@@ -32,6 +32,9 @@
           },
           "sharding" : {
             "clusterRole" : "configsvr"
+          },
+          "replication" : {
+            "replSetName" : "<configsvr_repl_set_name>"
           }
         }
       }

@@ -36,15 +36,44 @@ user node['mongodb3']['user'] do
   action :create
 end
 
-# Create the Mongos config file
+# Create mongodb configsvr configuration 
 config_nodes = search(:node, "role:configsvr")
-delim = ""
-config_servers = ""
-config_nodes.each do |cnode|
-	config_servers = config_servers + "#{delim}" + cnode['ipaddress'] + ":27019"
-	delim = ","
+config_rs_delim = ""
+conf_repl_set_name = config_nodes.first['mongodb3']['config']['mongod']['replication']['replSetName']
+if conf_repl_set_name == 'none' or  config_nodes.first['mongodb3']['package']['version'].to_s < "3.2.0" or conf_repl_set_name.nil? 
+	delim = ""
+else
+	delim = "#{conf_repl_set_name}/"	
+	config_rs_init_clause = ""
+	id_no = 0
+	config_nodes.each do |cnode|
+		
+		config_rs_init_clause =  config_rs_init_clause + config_rs_delim + "{ _id: #{id_no}, host: \"#{cnode["ipaddress"]}:#{cnode['mongodb3']['config']['mongod']['net']['port']}\" }"
+		config_rs_delim = ","
+		id_no = id_no + 1
+	end 
+	
+	execute "intiate replset configsvr " do
+		command "mongo --host #{config_nodes.first["ipaddress"]}:#{config_nodes.first['mongodb3']['config']['mongod']['net']['port']} <<EOF
+		rs.initiate({_id: \"#{conf_repl_set_name}\", configsvr: true, members: [#{config_rs_init_clause}]} )
+		EOF>>"
+		user node['mongodb3']['user']
+		not_if "echo 'rs.status()' | mongo --host  #{config_nodes.first["ipaddress"]}:#{config_nodes.first['mongodb3']['config']['mongod']['net']['port']} --quiet | grep #{config_nodes.first["ipaddress"]}" 
+	end
+
 end
 
+
+config_servers = ""
+
+config_nodes.each do |cnode|
+	
+	config_servers = config_servers + "#{delim}" + cnode['ipaddress'] + ":" + cnode['mongodb3']['config']['mongod']['net']['port'].to_s
+	delim = ","
+
+end
+
+# Create the Mongos config file
 node.override['mongodb3']['config']['mongos']['sharding']['configDB'] = config_servers 
 template node['mongodb3']['mongos']['config_file'] do
   source 'mongodb.conf.erb'
@@ -76,23 +105,28 @@ end
 execute 'mongos start' do
 	command "mongos --config /etc/mongos.conf --fork"
 	user node['mongodb3']['user']
-	not_if 'ps -ef | grep mongos | grep -v "grep"'
+	not_if 'ps -ef | grep "mongos --config /etc/mongos.conf --fork" | grep -v "grep"'
 end
 
 shard_nodes =  search(:node, "role:shard")
 
 shard_nodes.each do |cnode|
-   #cmd = "echo "sh.addShard(" + cnode['ipaddress'] + ":27017" + ");" | mongo --host localhost:27018 "
-   #test = "echo "sh.status()" | mongo --host localhost:27018 | grep " +  cnode['ipaddress']
+   
+   repl_set_name = cnode['mongodb3']['config']['mongod']['replication']['replSetName']
+   if not (repl_set_name == "none" or repl_set_name.nil?)
+   	prefix = "#{repl_set_name}/"
+   else
+   	prefix = ""
+   end
+   
+   
+   
    execute "add shard #{cnode['ipaddress']}" do
-       # code  'mongo --host localhost:27018 <<EOF
-       #		 sh.addShard("' + cnode["ipaddress"] + ':27017")  
-       #	EOF'
-	command "mongo --host localhost:27018 <<EOF
-		sh.addShard(\"#{cnode["ipaddress"]}:27017\")
+		command "mongo --host localhost:#{node['mongodb3']['config']['mongos']['net']['port']} <<EOF
+		sh.addShard(\"#{prefix}#{cnode["ipaddress"]}:#{cnode['mongodb3']['config']['mongod']['net']['port']}\")
 		EOF>>"
         user node['mongodb3']['user']
-        not_if "echo 'sh.status()' | mongo --host localhost:27018 | grep #{cnode["ipaddress"]}" 
+        not_if "echo 'sh.status()' | mongo --host localhost:#{node['mongodb3']['config']['mongos']['net']['port']} --quiet | grep #{cnode["ipaddress"]}" 
    end
 
 

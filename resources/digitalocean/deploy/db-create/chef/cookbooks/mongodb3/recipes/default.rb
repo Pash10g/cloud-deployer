@@ -50,6 +50,18 @@ unless node['mongodb3']['config']['key_file_content'].to_s.empty?
   end
 end
 
+# Disable transperent huge pages 
+template '/etc/init.d/disable-transparent-hugepages' do
+  source 'disable-transparent-hugepages.erb'
+  mode 755
+end
+
+execute "stup huge pages init.d" do
+    		command "sudo update-rc.d disable-transparent-hugepages defaults;/etc/init.d/disable-transparent-hugepages start"
+    		not_if "cat /sys/kernel/mm/transparent_hugepage/enabled | grep 'always madvise [never]' "
+end
+
+
 # Update the mongodb config file
 template node['mongodb3']['mongod']['config_file'] do
   source 'mongodb.conf.erb'
@@ -60,10 +72,44 @@ template node['mongodb3']['mongod']['config_file'] do
   helpers Mongodb3Helper
 end
 
+
+
 # Start the mongod service
 service 'mongod' do
   supports :start => true, :stop => true, :restart => true, :status => true
-  action :enable
+  action [:enable,:start]
   subscribes :restart, "template[#{node['mongodb3']['mongod']['config_file']}]", :delayed
   subscribes :restart, "template[#{node['mongodb3']['config']['mongod']['security']['keyFile']}", :delayed
+end
+
+sleep(60)
+
+# Setup replica initiation
+repl_set_name = node['mongodb3']['config']['mongod']['replication']['replSetName']
+if not (repl_set_name == 'none' or repl_set_name.nil?) and node.role?('shard')
+    id_no = 0
+    config_rs_init_clause = "{ _id: #{id_no}, host: \"#{node["ipaddress"]}:#{node['mongodb3']['config']['mongod']['net']['port']}\"}"
+    execute "add initial replicaset for shard #{node['ipaddress']}" do
+  		command "mongo --host localhost:#{node['mongodb3']['config']['mongod']['net']['port']} <<EOF
+  		rs.initiate({_id: \"#{repl_set_name}\", members: [#{config_rs_init_clause}]} )
+  		EOF>>"
+      user node['mongodb3']['user']
+      not_if "echo 'rs.status()' | mongo --host localhost:#{node['mongodb3']['config']['mongod']['net']['port']} --quiet | grep #{node["ipaddress"]}" 
+      retries 3
+    end
+end
+
+# Setup Replica nodes
+if not (repl_set_name == 'none' or repl_set_name.nil? ) and node.role?('shard')
+  replica_nodes =  search(:node, %Q{role:replicaset AND replSetName:"#{repl_set_name}"})
+  replica_nodes.each do |cnode|
+      execute "add replicaset #{cnode['ipaddress']}" do
+    		command "mongo --host localhost:#{node['mongodb3']['config']['mongod']['net']['port']} <<EOF
+    		rs.add(\"#{cnode["ipaddress"]}:#{cnode['mongodb3']['config']['mongod']['net']['port']}\")
+    		EOF>>"
+        user node['mongodb3']['user']
+        not_if "echo 'rs.status()' | mongo --host localhost:#{node['mongodb3']['config']['mongod']['net']['port']} --quiet | grep #{cnode["ipaddress"]}" 
+        retries 3
+      end
+  end
 end

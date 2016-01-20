@@ -223,7 +223,7 @@ default['mongodb3']['config']['mongod']['snmp']['master'] = nil
 
 # Mongos config
 default['mongodb3']['config']['mongos']['net']['port'] = 27018 # default : 27017
-default['mongodb3']['config']['mongos']['net']['bindIp'] = '127.0.0.1' # default : '0.0.0.0'
+default['mongodb3']['config']['mongos']['net']['bindIp'] = '0.0.0.0' # default : '0.0.0.0'
 default['mongodb3']['config']['mongos']['systemLog']['path'] = '/var/log/mongodb/mongos.log'
 default['mongodb3']['config']['mongos']['systemLog']['logAppend'] = true # default : false
 default['mongodb3']['config']['mongos']['systemLog']['destination'] = 'file' # default : 'file'

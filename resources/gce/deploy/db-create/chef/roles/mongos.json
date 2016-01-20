@@ -6,6 +6,13 @@
       "mongodb3" : {
 		"package" : {
 			"version" : "<mongo_version>"
+		},
+		"config" : {
+		  "mongos" : {
+			"net" : {
+			  "port" : <mongos_port> 
+			}
+		  }
 		}
 	  }
   },
