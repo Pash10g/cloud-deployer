@@ -14,15 +14,14 @@ sudo apt-get update -y
 sudo apt-get install juju python-pip -y
 sudo pip install juju-docean  || { echo "ERROR installing digitalocean API "; exit 2 ;}
 
-cp /root/.juju/environments.yaml /root/.juju/environments.yaml_back
+cp "" > /root/.juju/environments.yaml
 
-juju generate-config -f
 
 echo "    <env_name>:" >> /root/.juju/environments.yaml
 echo "      type: manual" >> /root/.juju/environments.yaml
 echo "      bootstrap-host: null" >> /root/.juju/environments.yaml
 echo "      bootstrap-user: root" >> /root/.juju/environments.yaml
 echo "export  DO_OAUTH_TOKEN=\"<ac_key>\"" >> ~/.bashrc
-
+echo "export DO_SSH_KEY=\"<ssh_key_name>\""  >> ~/.bashrc
 source ~/.bashrc
 

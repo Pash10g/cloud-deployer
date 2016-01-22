@@ -27,3 +27,4 @@
 <system_password>=SYSTEM_PASSWORD
 <mongo_version>=MONGO_VERSION
 <ac_key>=AC_KEY
+<ssh_key_name>=SSH_KEY_NAME
