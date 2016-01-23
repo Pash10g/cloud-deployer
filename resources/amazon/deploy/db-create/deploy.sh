@@ -49,7 +49,7 @@ do
 
 	echo "Starting deploy configsvr${i}"
 	if [ ! $(juju status --format tabular | grep "configsvr${i}/" | awk '{print $7}') ]; then
-		deploy_vm "cpu-cores=<configsvr_cpu_core> mem=<configsvr_mem_mb>" machine_no
+		deploy_vm "cpu-cores=<configsvr_cpu_core> mem=<configsvr_mem_mb> root-disk=<configsvr_data_disk>" machine_no
 		machine=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')
 		fqdn=$(juju status --format tabular | grep ${machine} | awk '{print $3}')
 		echo "configsvr${i}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
@@ -78,7 +78,7 @@ for i in {1..<mongos_number>}
 do
 	echo " Starting deploy of mongos${i}"
 	if [ ! $(juju status --format tabular | grep "mongos${i}/" | awk '{print $7}') ]; then
-	        deploy_vm "mem=<mongos_mem_mb> cpu-cores=<mongos_cpu_core>" machine_no
+	        deploy_vm "mem=<mongos_mem_mb> cpu-cores=<mongos_cpu_core> root-disk=<mongos_data_disk>" machine_no
 		machine_mongos=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')
 		fqdn=$(juju status --format tabular | grep ${machine_mongos} | awk '{print $3}')
 	        echo "mongos${i}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
@@ -107,7 +107,7 @@ do
 
 	echo " Starting deploy of shard${i}"
 	if [ ! $(juju status --format tabular | grep "shard${i}/" | awk '{print $7}') ]; then
-		deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core>" machine_no
+		deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core> root-disk=<shard_data_disk>" machine_no
 		machine_shard=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')
 		fqdn=$(juju status --format tabular | grep ${machine_shard} | awk '{print $3}')
 		echo "shard${i}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
@@ -132,7 +132,7 @@ do
 	do
 		echo " Starting deploy of shard${i}-replicaset${j}"
 		if [ ! $(juju status --format tabular | grep "shard${i}-replicaset${j}/" | awk '{print $7}') ]; then
-			deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core>" machine_no
+			deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core> root-disk=<shard_data_disk>" machine_no
 			machine_repl=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')
 			fqdn=$(juju status --format tabular | grep ${machine_repl} | awk '{print $3}')
 			echo "  shard-replicaset${j}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
