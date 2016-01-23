@@ -159,6 +159,11 @@ do
 	else
 		echo "shard${i} component already exist re-bootstraping..."
 		fqdn=$(juju status --format tabular | grep "shard${i}/" | awk '{print $7}') 
+		echo "shard${i}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		echo "  shard_replica_set_name : <shard_repl_set_name>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		echo "  shard_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		echo "  machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		echo "  FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 	fi
 	#Bootstrap chef configuration with role shard on the VM providing relevant configuration
 	echo " Starting chef add node : 'role[shard]' on host : ${fqdn}"	
@@ -187,6 +192,11 @@ do
 		else
 			echo "shard${i}-replicaset${j} component already exist re-bootstraping..."
 			fqdn=$(juju status --format tabular | grep "shard${i}-replicaset${j}/" | awk '{print $7}') 
+			echo "  shard-replicaset${j}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+	 		echo "    shard_replica_set_name : <shard_repl_set_name>_shard${i}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+			echo "    shard_replicaset_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+			echo "    machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+			echo "    FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		fi
 		#Bootstrap chef configuration with role replicaset on the VM providing relevant configuration
 		echo " Starting chef add node : 'role[replicaset]' on host : ${fqdn}"	
