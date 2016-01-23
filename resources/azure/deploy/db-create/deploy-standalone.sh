@@ -43,59 +43,56 @@ cd $back_dir
 
 echo "" > /tmp/standalone-<env_name>-mongo-conf.yaml
 
-for i in {1..<shard_number>} 
-do
+echo " Starting deploy of primary"
+if [ ! $(juju status --format tabular | grep "primary/" | awk '{print $7}') ]; then
+	deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core> root-disk=<shard_data_disk>" machine_no
+	machine_primary=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')
+	fqdn=$(juju status --format tabular | grep ${machine_primary} | awk '{print $3}')
+	echo "primary: " >> /tmp/standalone-<env_name>-mongo-conf.yaml
+	echo "  primary_replica_set_name : <shard_repl_set_name>" >> /tmp/standalone-<env_name>-mongo-conf.yaml
+	echo "  primary_port : <shard_port>" >> /tmp/standalone-<env_name>-mongo-conf.yaml
+	echo "  machine: machine-${machine_no}" >> /tmp/standalone-<env_name>-mongo-conf.yaml
+	echo "  FQDN: ${fqdn} " >> /tmp/standalone-<env_name>-mongo-conf.yaml
+	juju deploy /root/.juju/charms/trusty/deploy-node "primary" --series trusty --to $machine_no 
 
-	echo " Starting deploy of primary${i}"
-	if [ ! $(juju status --format tabular | grep "primary${i}/" | awk '{print $7}') ]; then
+	echo "Exposing primary"
+	juju expose "primary"
+	sleep 30s
+else
+	echo "primary component already exist re-bootstraping..."
+	fqdn=$(juju status --format tabular | grep "primary/" | awk '{print $7}') 
+fi	
+echo " Starting chef add node : 'role[shard]' on host : ${fqdn}"	
+knife bootstrap  ${fqdn} --ssh-user ubuntu --sudo -r 'role[shard]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_primary\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_primary} role[shard]  "; exit 2; }
+echo " Successfully finished chef install 'role[shard]'  on host : ${fqdn}"
+
+for j in {1..<shard_repl_number>} 
+do
+	echo " Starting deploy of primary-replicaset${j}"
+	if [ ! $(juju status --format tabular | grep "primary-replicaset${j}/" | awk '{print $7}') ]; then
 		deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core> root-disk=<shard_data_disk>" machine_no
-		machine_primary=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')
-		fqdn=$(juju status --format tabular | grep ${machine_primary} | awk '{print $3}')
-		echo "primary${i}: " >> /tmp/standalone-<env_name>-mongo-conf.yaml
-		echo "  primary_replica_set_name : <shard_repl_set_name>" >> /tmp/standalone-<env_name>-mongo-conf.yaml
-		echo "  primary_port : <shard_port>" >> /tmp/standalone-<env_name>-mongo-conf.yaml
-		echo "  machine: machine-${machine_no}" >> /tmp/standalone-<env_name>-mongo-conf.yaml
-		echo "  FQDN: ${fqdn} " >> /tmp/standalone-<env_name>-mongo-conf.yaml
-		juju deploy /root/.juju/charms/trusty/deploy-node "primary${i}" --series trusty --to $machine_no 
-	
-		echo "Exposing primary${i}"
-		juju expose "primary${i}"
+		machine_repl=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')
+		fqdn=$(juju status --format tabular | grep ${machine_repl} | awk '{print $3}')
+		echo "  primary-replicaset${j}: " >> /tmp/standalone-<env_name>-mongo-conf.yaml
+ 		echo "    primary_replica_set_name : <shard_repl_set_name>_primary" >> /tmp/standalone-<env_name>-mongo-conf.yaml
+		echo "    primary_replicaset_port : <shard_port>" >> /tmp/standalone-<env_name>-mongo-conf.yaml
+		echo "    machine: machine-${machine_no}" >> /tmp/standalone-<env_name>-mongo-conf.yaml
+		echo "    FQDN: ${fqdn} " >> /tmp/standalone-<env_name>-mongo-conf.yaml
+		juju deploy /root/.juju/charms/trusty/deploy-node "primary-replicaset${j}" --series trusty --to $machine_no 
+
+		echo "Exposing  primary-replicaset${j}"
+		juju expose "primary-replicaset${j}"
 		sleep 30s
 	else
-		echo "primary${i} component already exist re-bootstraping..."
-		fqdn=$(juju status --format tabular | grep "primary${i}/" | awk '{print $7}') 
-	fi	
-	echo " Starting chef add node : 'role[shard]' on host : ${fqdn}"	
-        knife bootstrap  ${fqdn} --ssh-user ubuntu --sudo -r 'role[shard]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_primary${i}\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_primary} role[shard]  "; exit 2; }
-	echo " Successfully finished chef install 'role[shard]'  on host : ${fqdn}"
-	
-	for j in {1..<shard_repl_number>} 
-	do
-		echo " Starting deploy of primary${i}-replicaset${j}"
-		if [ ! $(juju status --format tabular | grep "primary${i}-replicaset${j}/" | awk '{print $7}') ]; then
-			deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core> root-disk=<shard_data_disk>" machine_no
-			machine_repl=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')
-			fqdn=$(juju status --format tabular | grep ${machine_repl} | awk '{print $3}')
-			echo "  primary-replicaset${j}: " >> /tmp/standalone-<env_name>-mongo-conf.yaml
-	 		echo "    primary_replica_set_name : <shard_repl_set_name>_primary${i}" >> /tmp/standalone-<env_name>-mongo-conf.yaml
-			echo "    primary_replicaset_port : <shard_port>" >> /tmp/standalone-<env_name>-mongo-conf.yaml
-			echo "    machine: machine-${machine_no}" >> /tmp/standalone-<env_name>-mongo-conf.yaml
-			echo "    FQDN: ${fqdn} " >> /tmp/standalone-<env_name>-mongo-conf.yaml
-			juju deploy /root/.juju/charms/trusty/deploy-node "primary${i}-replicaset${j}" --series trusty --to $machine_no 
-	
-			echo "Exposing  primary${i}-replicaset${j}"
-			juju expose "primary${i}-replicaset${j}"
-			sleep 30s
-		else
-			echo "primary${i}-replicaset${j} component already exist re-bootstraping..."
-			fqdn=$(juju status --format tabular | grep "primary${i}-replicaset${j}/" | awk '{print $7}') 
-		fi
-		echo " Starting chef add node : 'role[replicaset]' on host : ${fqdn}"	
-		knife bootstrap  ${fqdn} --ssh-user ubuntu --sudo -r 'role[replicaset]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_primary${i}\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${fqdn} role[replicaset]  "; exit 2; }
+		echo "primary-replicaset${j} component already exist re-bootstraping..."
+		fqdn=$(juju status --format tabular | grep "primary-replicaset${j}/" | awk '{print $7}') 
+	fi
+	echo " Starting chef add node : 'role[replicaset]' on host : ${fqdn}"	
+	knife bootstrap  ${fqdn} --ssh-user ubuntu --sudo -r 'role[replicaset]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_primary\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${fqdn} role[replicaset]  "; exit 2; }
 
-		echo " Successfully finished chef install 'role[replicaset]'  on host : ${fqdn}"
-	done
+	echo " Successfully finished chef install 'role[replicaset]'  on host : ${fqdn}"
 done
+
 
 
 echo "########################################################################"
