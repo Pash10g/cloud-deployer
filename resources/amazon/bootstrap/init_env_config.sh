@@ -19,7 +19,7 @@ fi
 
 
 if [ -f /root/.juju/environments/<env_name>.json ]; then
-	rm -rf /root/.juju/environments/<env_name>*
+	rm  /root/.juju/environments/<env_name>.json
 fi
 
 echo "Genrating juju configuration for env : '<env_name>'"
