@@ -69,8 +69,8 @@ do
 		deploy_vm "cpu-cores=<configsvr_cpu_core> mem=<configsvr_mem_mb> root-disk=<configsvr_data_disk>" machine_no
 		
 		# Save data
-		machine=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')
-		fqdn=$(juju status --format tabular | grep ${machine} | awk '{print $3}')
+		machine=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $5}')
+		fqdn=$(juju status --format tabular | grep ${machine} | awk '{print $4}')
 		echo "configsvr${i}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  replicaset : <configsvr_repl_name> " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  config_server_port : <configsvr_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
@@ -78,7 +78,7 @@ do
 		echo "  FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		
 		# Deploy any juju specifics to the vm (open ports, etc.)	
-		juju deploy /root/.juju/charms/trusty/deploy-node "configsvr${i}" --series trusty --to $machine_no 
+		 juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node "configsvr${i}"  --to $machine_no 
 		
 		# Exopose the service to the outside world
 		echo "Exposing configsvr${1}"
@@ -107,14 +107,14 @@ do
 	if [ ! $(juju status --format tabular | grep "mongos${i}/" | awk '{print $7}') ]; then
 		# Deploy mongos VM
 	        deploy_vm "mem=<mongos_mem_mb> cpu-cores=<mongos_cpu_core> root-disk=<mongos_data_disk>" machine_no
-		machine_mongos=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')
-		fqdn=$(juju status --format tabular | grep ${machine_mongos} | awk '{print $3}')
+		machine_mongos=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $5}')
+		fqdn=$(juju status --format tabular | grep ${machine_mongos} | awk '{print $4}')
 	        echo "mongos${i}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 	        echo "  mongos_port : <mongos_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 	        echo "  machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 	        echo "  FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 	        # Deploy any juju specifics to the vm (open ports, etc.)
-		juju deploy /root/.juju/charms/trusty/deploy-node "mongos${i}" --series trusty --to $machine_no 
+		 juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node "mongos${i}"  --to $machine_no 
 	
 		echo "Exposing mongos${1}"
 		juju expose "mongos${i}"
@@ -144,14 +144,14 @@ do
 	if [ ! $(juju status --format tabular | grep "shard${i}/" | awk '{print $7}') ]; then
 		# Deploy shard VM
 		deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core> root-disk=<shard_data_disk>" machine_no
-		machine_shard=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')
-		fqdn=$(juju status --format tabular | grep ${machine_shard} | awk '{print $3}')
+		machine_shard=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $5}')
+		fqdn=$(juju status --format tabular | grep ${machine_shard} | awk '{print $4}')
 		echo "shard${i}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  shard_replica_set_name : <shard_repl_set_name>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  shard_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		juju deploy /root/.juju/charms/trusty/deploy-node "shard${i}" --series trusty --to $machine_no 
+		 juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node "shard${i}"  --to $machine_no 
 	
 		echo "Exposing shard${i}"
 		juju expose "shard${i}"
@@ -177,14 +177,14 @@ do
 		if [ ! $(juju status --format tabular | grep "shard${i}-replicaset${j}/" | awk '{print $7}') ]; then
 			# Deploy replicaset VM
 			deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core> root-disk=<shard_data_disk>" machine_no
-			machine_repl=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')
-			fqdn=$(juju status --format tabular | grep ${machine_repl} | awk '{print $3}')
+			machine_repl=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $5}')
+			fqdn=$(juju status --format tabular | grep ${machine_repl} | awk '{print $4}')
 			echo "  shard-replicaset${j}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 	 		echo "    shard_replica_set_name : <shard_repl_set_name>_shard${i}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 			echo "    shard_replicaset_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 			echo "    machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 			echo "    FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-			juju deploy /root/.juju/charms/trusty/deploy-node "shard${i}-replicaset${j}" --series trusty --to $machine_no 
+			 juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node "shard${i}-replicaset${j}"  --to $machine_no 
 	
 			echo "Exposing  shard${i}-replicaset${j}"
 			juju expose "shard${i}-replicaset${j}"
