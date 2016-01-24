@@ -1,4 +1,4 @@
-util: bash [[SQL_FILE]] > [[LOG_FILE]] 2>&1  
+util: bash [[SQL_FILE]] 2>&1 | tee [[LOG_FILE]]   
 param:CLUSTER_NAME 
 param:ENV_NAME 
 param:CONFIGSVR_REPL_SET_NAME
