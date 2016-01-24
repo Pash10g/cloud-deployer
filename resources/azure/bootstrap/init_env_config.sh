@@ -1,11 +1,16 @@
 #!/bin/bash
+
 if ! which juju 2>/dev/null; then
         sudo add-apt-repository ppa:juju/stable -y
-        sudo apt-get update -y && sudo apt-get install juju-core -y
+        sudo apt-get update && sudo apt-get install juju-core -y
 fi
 if ! which knife 2>/dev/null; then
         curl -L https://www.opscode.com/chef/install.sh | sudo bash
 fi
+
+
+
+
 
 if ! which azure 2>/dev/null; then
 	sudo apt-get install nodejs-legacy -y
@@ -20,12 +25,10 @@ if ! azure account show 2>/dev/null; then
 fi	
 
 
-#azure role assignment create --objectId 146c9e6b-e9a0-454c-9e0a-1f85190ca17d -o Owner -c /subscriptions/	
-#
 if [ -d /root/.juju/environments ]; then
-	rm /root/.juju/environments/<env_name>*
+	rm -rf /root/.juju/environments/<env_name>*
 fi
-
+juju generate-config -f || { echo "Failed to generate init configuration "; exit 2; }
 echo "" > /root/.juju/environments.yaml
 
 
