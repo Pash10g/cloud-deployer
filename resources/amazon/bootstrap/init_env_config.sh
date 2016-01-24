@@ -1,13 +1,15 @@
 #!/bin/bash
 
-#set -e
+set -e
 
 if ! which juju 2>/dev/null; then
+	echo "Installing juju..."
 	sudo add-apt-repository ppa:juju/stable -y
 	sudo apt-get update && sudo apt-get install juju-core -y
 fi
 
 if ! which knife 2>/dev/null; then
+	echo "Installing chef workstation..."
 	curl -L https://www.opscode.com/chef/install.sh | sudo bash
 fi
  
@@ -15,11 +17,12 @@ fi
 
 #juju generate-config -f || { echo "ERROR Failed to create juju environments.yaml file" ; exit 2 }
 
-if [ -d /root/.juju/environments ]; then
+
+if [ -f /root/.juju/environments/<env_name>.json ]; then
 	rm -rf /root/.juju/environments/<env_name>*
 fi
 
-juju generate-config -f || { echo "ERROR Failed to create juju environments.yaml file" ; exit 2 }
+juju generate-config -f #|| { echo "ERROR Failed to create juju environments.yaml file" ; exit 2 }
 
 echo "" > /root/.juju/environments.yaml
 
