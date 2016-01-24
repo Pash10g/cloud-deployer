@@ -1,8 +1,8 @@
 #!/bin/bash
 
 if ! which juju 2>/dev/null; then
-        sudo add-apt-repository ppa:juju/stable -y
-        sudo apt-get update && sudo apt-get install juju-core -y
+	sudo add-apt-repository ppa:juju/devel -y
+	sudo apt-get update && sudo apt-get install juju-core -y
 fi
 if ! which knife 2>/dev/null; then
         curl -L https://www.opscode.com/chef/install.sh | sudo bash
