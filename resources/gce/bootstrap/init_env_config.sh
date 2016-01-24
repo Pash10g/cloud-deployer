@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 if ! which juju 2>/dev/null; then
         sudo add-apt-repository ppa:juju/stable -y
         sudo apt-get update && sudo apt-get install juju-core -y
@@ -12,9 +10,9 @@ fi
 
 
 if [ -d /root/.juju/environments ]; then
-	rm /root/.juju/environments/<env_name>*
+	rm -rf /root/.juju/environments/<env_name>*
 fi
-
+juju generate-config -f || { echo "Failed to generate init configuration "; exit 2; }
 echo "" > /root/.juju/environments.yaml
 
 echo "default: <env_name>" >> /root/.juju/environments.yaml
