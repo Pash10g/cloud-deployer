@@ -12,6 +12,9 @@ fi
 if [ -d /root/.juju/environments ]; then
 	rm -rf /root/.juju/environments/<env_name>*
 fi
+
+mkdir -p /root/.chef/
+
 juju generate-config -f || { echo "Failed to generate init configuration "; exit 2; }
 echo "" > /root/.juju/environments.yaml
 
