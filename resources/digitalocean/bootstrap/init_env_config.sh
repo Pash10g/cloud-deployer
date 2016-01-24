@@ -2,18 +2,26 @@
 
 
 if ! (which juju 2>/dev/null); then
-	sudo apt-get install juju -y 
+	echo "Installing Juju.. "
+	sudo add-apt-repository ppa:juju/devel -y
+	sudo apt-get update && sudo apt-get install juju-core -y
 fi
 
 if ! which knife 2>&1; then
+	echo "Installing chef.. "
 	curl -L https://www.opscode.com/chef/install.sh | sudo bash
 fi
  
-sudo add-apt-repository ppa:juju/stable -y
-sudo apt-get update -y
+
 sudo apt-get install juju python-pip -y
 sudo pip install juju-docean  || { echo "ERROR installing digitalocean API "; exit 2 ;}
 
+if [ -f /root/.juju/environments/<env_name>.json ]; then
+	rm  /root/.juju/environments/<env_name>.json
+fi
+
+echo "Genrating juju configuration for env : '<env_name>'"
+juju generate-config -f 
 cp "" > /root/.juju/environments.yaml
 
 
