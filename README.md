@@ -15,8 +15,20 @@ The main directory has a main run file called : run_deployer.py.
 
 The vendors is one of the supported vnedors :
 - amazon - AWS (see : https://jujucharms.com/docs/stable/config-aws for input configuration)
+  * Mandatory params which should be set in config/amazon/properties.conf are :
+  - ACCES_KEY (your aws access key)
+  - SECRET_KEY (your aws secret key)
 - gce - Google Cloud (see : https://jujucharms.com/docs/stable/config-gce for input configuration)
-
+  * Mandatory params which should be set in config/gce/properties.conf are :
+  - AUTH_FILE (Json file dowloaded from GCE Api console as stated in the manual )
+  - PROJECT_ID (Google GCE project_id you would like to use)
+- azure - Azure cloud (see https://launchpad.net/juju-core/1.26/1.26-alpha3 "azure provider changes")
+  * Mandatory params which should be set in config/gce/properties.conf are :
+  - APPLICATION_ID (application id recieved during Azure AD init)
+  - APPLICATION_PASSWORD (application password provided during Azure AD init)
+  - TENANT_ID (azure tenant id)
+  - SUBSCRIPTION_ID ( azure subscritption id)
+  
 The steps :
 - init-bootstrap - lunches juju and chef server on the desired cloud.
 - deploy - deploys the mongodb cluster
