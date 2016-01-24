@@ -21,7 +21,7 @@ while [ "$machine_status" =  "pending" ]; do
 done
 
 if [ "$machine_status" = "started" ]; then
-	bootstarp_node="$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $3}')"
+	bootstarp_node="$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')"
 else
 	exit 2
 fi
