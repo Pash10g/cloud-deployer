@@ -21,9 +21,16 @@ The vendors is one of the supported vnedors :
 - gce - Google Cloud (see : https://jujucharms.com/docs/stable/config-gce for input configuration)
   * Mandatory params which should be set in config/gce/properties.conf are :
   - AUTH_FILE (Json file dowloaded from GCE Api console as stated in the manual )
+    * format : {
+   "type": "service_account",
+   "private_key_id": "xxxxxxxxxxxxxxxxx",
+   "private_key": "-----BEGIN PRIVATE KEY-----\nxxxxxxxx\n-----END PRIVATE KEY-----\n",
+   "client_email": "xxxxx@xxxxxx.iam.gserviceaccount.com",
+   "client_id": "xxxxxxxxxxxxxx"
+   }
   - PROJECT_ID (Google GCE project_id you would like to use)
 - azure - Azure cloud (see https://launchpad.net/juju-core/1.26/1.26-alpha3 "azure provider changes")
-  * Mandatory params which should be set in config/gce/properties.conf are :
+  * Mandatory params which should be set in config/azure/properties.conf are :
   - APPLICATION_ID (application id recieved during Azure AD init)
   - APPLICATION_PASSWORD (application password provided during Azure AD init)
   - TENANT_ID (azure tenant id)
