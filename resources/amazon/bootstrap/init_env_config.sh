@@ -22,7 +22,8 @@ if [ -f /root/.juju/environments/<env_name>.json ]; then
 	rm -rf /root/.juju/environments/<env_name>*
 fi
 
-juju generate-config -f #|| { echo "ERROR Failed to create juju environments.yaml file" ; exit 2 }
+echo "Genrating juju configuration for env : '<env_name>'"
+juju generate-config -f 
 
 echo "" > /root/.juju/environments.yaml
 
