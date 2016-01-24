@@ -22,6 +22,9 @@ if [ -f /root/.juju/environments/<env_name>.json ]; then
 	rm  /root/.juju/environments/<env_name>.json
 fi
 
+mkdir -p /root/.chef/
+
+
 echo "Genrating juju configuration for env : '<env_name>'"
 juju generate-config -f 
 
