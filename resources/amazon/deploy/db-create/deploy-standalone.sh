@@ -46,14 +46,14 @@ echo "" > /tmp/standalone-<env_name>-mongo-conf.yaml
 echo " Starting deploy of primary"
 if [ ! $(juju status --format tabular | grep "primary/" | awk '{print $7}') ]; then
 	deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core> root-disk=<shard_data_disk>" machine_no
-	machine_primary=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')
-	fqdn=$(juju status --format tabular | grep ${machine_primary} | awk '{print $3}')
+	machine_primary=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $5}')
+	fqdn=$(juju status --format tabular | grep ${machine_primary} | awk '{print $4}')
 	echo "primary: " >> /tmp/standalone-<env_name>-mongo-conf.yaml
 	echo "  primary_replica_set_name : <shard_repl_set_name>" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 	echo "  primary_port : <shard_port>" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 	echo "  machine: machine-${machine_no}" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 	echo "  FQDN: ${fqdn} " >> /tmp/standalone-<env_name>-mongo-conf.yaml
-	juju deploy /root/.juju/charms/trusty/deploy-node "primary" --series trusty --to $machine_no 
+	juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node  "primary"  --to $machine_no 
 
 	echo "Exposing primary"
 	juju expose "primary"
@@ -71,14 +71,14 @@ do
 	echo " Starting deploy of primary-replicaset${j}"
 	if [ ! $(juju status --format tabular | grep "primary-replicaset${j}/" | awk '{print $7}') ]; then
 		deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core> root-disk=<shard_data_disk>" machine_no
-		machine_repl=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')
-		fqdn=$(juju status --format tabular | grep ${machine_repl} | awk '{print $3}')
+		machine_repl=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $5}')
+		fqdn=$(juju status --format tabular | grep ${machine_repl} | awk '{print $4}')
 		echo "  primary-replicaset${j}: " >> /tmp/standalone-<env_name>-mongo-conf.yaml
  		echo "    primary_replica_set_name : <shard_repl_set_name>_primary" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 		echo "    primary_replicaset_port : <shard_port>" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 		echo "    machine: machine-${machine_no}" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 		echo "    FQDN: ${fqdn} " >> /tmp/standalone-<env_name>-mongo-conf.yaml
-		juju deploy /root/.juju/charms/trusty/deploy-node "primary-replicaset${j}" --series trusty --to $machine_no 
+		juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node  "primary-replicaset${j}"  --to $machine_no 
 
 		echo "Exposing  primary-replicaset${j}"
 		juju expose "primary-replicaset${j}"
@@ -92,7 +92,6 @@ do
 
 	echo " Successfully finished chef install 'role[replicaset]'  on host : ${fqdn}"
 done
-
 
 
 echo "########################################################################"
