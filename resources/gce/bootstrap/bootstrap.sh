@@ -7,7 +7,7 @@ export BASE_DIR=`dirname $FULLPATH_SCRIPT`
 
 juju switch "<env_name>"  || { echo "ERROR While setting env <env_name> "; exit 2; }
 
-juju bootstrap -v  --constraints "cpu-cores=1 cpu-power=0  mem=2G " || { echo "ERROR While bootstraping juju env <env_name> "; exit 2; }
+juju bootstrap -v  --constraints "cpu-cores=1 cpu-powerr=0 mem=3500M " || { echo "ERROR While bootstraping juju env <env_name> "; exit 2; }
 
 machine_no="0"
 sleep 1m
