@@ -4,20 +4,22 @@
 
 if ! which juju 2>/dev/null; then
 	sudo add-apt-repository ppa:juju/stable
-	sudo apt-get update && sudo apt-get install juju-core
+	sudo apt-get update && sudo apt-get install juju-core -y
 fi
 
 if !which knife 2>/dev/null; then
 	curl -L https://www.opscode.com/chef/install.sh | sudo bash
 fi
  
-cp  /root/.juju/environments.yaml  /root/.juju/environments.yaml_old
+
 
 #juju generate-config -f || { echo "ERROR Failed to create juju environments.yaml file" ; exit 2 }
 
 if [ -d /root/.juju/environments ]; then
-	rm /root/.juju/environments/<env_name>*
+	rm -rf /root/.juju/environments/<env_name>*
 fi
+
+juju generate-config -f || { echo "ERROR Failed to create juju environments.yaml file" ; exit 2 }
 
 echo "" > /root/.juju/environments.yaml
 
