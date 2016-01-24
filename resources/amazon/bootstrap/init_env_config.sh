@@ -4,7 +4,7 @@ set -e
 
 if ! which juju 2>/dev/null; then
 	echo "Installing juju..."
-	sudo add-apt-repository ppa:juju/stable -y
+	sudo add-apt-repository ppa:juju/devel -y
 	sudo apt-get update && sudo apt-get install juju-core -y
 fi
 
