@@ -39,7 +39,8 @@
   "chef_type": "role",
   "run_list": [
     "recipe[chef-client::default]",
-    "recipe[mongodb3::default]"
+    "recipe[mongodb3::default]",
+    "recipe[mongodb3::mms-monitoring-agent]"
   ],
   "env_run_lists": {
   }
