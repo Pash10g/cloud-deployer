@@ -1,6 +1,6 @@
 <cluster_name>=CLUSTER_NAME 
 <env_name>=ENV_NAME 
-<management_cerificate_path>=MANAGEMENT_CERTIFICATE_PATH
+<management_certificate_path>=MANAGEMENT_CERTIFICATE_PATH
 <storage_account_name>=STORAGE_ACCOUNT_NAME
 <subscription_id>=SUBSCRIPTION_ID
 <region>=REGION
