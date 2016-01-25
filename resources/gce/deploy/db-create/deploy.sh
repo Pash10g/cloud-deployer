@@ -59,7 +59,7 @@ cd $back_dir
 echo "" > /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 
 # Loop to provision all configsvr vm's
-for i in {1..<configsvr_number>}
+for ((i=1; i <= <configsvr_number>; i++)) 
 do
 
 	echo "Starting deploy configsvr${i}"
@@ -95,12 +95,12 @@ do
 	fi
 	#Bootstrap chef configuration with role configsvr on the VM
 	echo " Starting chef add node : 'role[configsvr]' on host : ${fqdn}"
-	knife bootstrap  ${fqdn}  --ssh-user ubuntu --sudo -r 'role[configsvr]' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine} role[configsvr]  "; exit 2; }
+	knife bootstrap  ${fqdn} -i /root/.juju/ssh/juju_id_rsa --ssh-user ubuntu --sudo -r 'role[configsvr]' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine} role[configsvr]  "; exit 2; }
 	echo " Successfully finished chef install 'role[configsvr]' on host : ${fqdn}"
 done
 
 # Loop to provision all mongos vm's
-for i in {1..<mongos_number>} 
+for ((i=1; i <= <mongos_number>; i++)) 
 do
 	echo " Starting deploy of mongos${i}"
 	# Check if current mongos component is already provisioned
@@ -131,12 +131,12 @@ do
 	fi
 	#Bootstrap chef configuration with role mongos on the VM
 	echo " Starting chef add node : 'role[mongos]' on host : ${fqdn}"
-        knife bootstrap  $fqdn  --ssh-user ubuntu --sudo -r 'role[mongos]' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_mongos} role[mongos]  "; exit 2; }
+        knife bootstrap  ${fqdn} -i /root/.juju/ssh/juju_id_rsa --ssh-user ubuntu --sudo -r 'role[mongos]' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_mongos} role[mongos]  "; exit 2; }
 	echo " Successfully finished chef install 'role[mongos]' on host : ${fqdn}"
 done
 
 
-for i in {1..<shard_number>} 
+for ((i=1; i <= <shard_number>; i++)) 
 do
 
 	echo " Starting deploy of shard${i}"
@@ -167,10 +167,10 @@ do
 	fi
 	#Bootstrap chef configuration with role shard on the VM providing relevant configuration
 	echo " Starting chef add node : 'role[shard]' on host : ${fqdn}"	
-        knife bootstrap  ${fqdn} --ssh-user ubuntu --sudo -r 'role[shard]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_shard${i}\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_shard} role[shard]  "; exit 2; }
+        knife bootstrap  ${fqdn} -i /root/.juju/ssh/juju_id_rsa --ssh-user ubuntu --sudo -r 'role[shard]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_shard${i}\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_shard} role[shard]  "; exit 2; }
 	echo " Successfully finished chef install 'role[shard]'  on host : ${fqdn}"
 	
-	for j in {1..<shard_repl_number>} 
+	for ((j=1; j <= <shard_repl_number>; j++))
 	do
 		echo " Starting deploy of shard${i}-replicaset${j}"
 		# Check if current replicaset component is already provisioned
@@ -200,7 +200,7 @@ do
 		fi
 		#Bootstrap chef configuration with role replicaset on the VM providing relevant configuration
 		echo " Starting chef add node : 'role[replicaset]' on host : ${fqdn}"	
-		knife bootstrap  ${fqdn} --ssh-user ubuntu --sudo -r 'role[replicaset]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_shard${i}\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${fqdn} role[replicaset]  "; exit 2; }
+		knife bootstrap  ${fqdn} -i /root/.juju/ssh/juju_id_rsa --ssh-user ubuntu --sudo -r 'role[replicaset]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_shard${i}\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${fqdn} role[replicaset]  "; exit 2; }
 
 		echo " Successfully finished chef install 'role[replicaset]'  on host : ${fqdn}"
 	done
