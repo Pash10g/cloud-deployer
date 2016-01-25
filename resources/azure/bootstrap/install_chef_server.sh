@@ -80,7 +80,7 @@ function main () {
 	
 	HOSTNAME=$(hostname)
 	
-	echo "server_name = \"$HOST"" >> /etc/opscode/chef-server.rb
+	echo "server_name = \"${HOST}\"" >> /etc/opscode/chef-server.rb
 	echo "api_fqdn = server_name " >> /etc/opscode/chef-server.rb
 	echo "bookshelf['vip'] = server_name " >> /etc/opscode/chef-server.rb
 	echo "nginx['url'] = \"https://#{server_name}\"" >> /etc/opscode/chef-server.rb
