@@ -40,6 +40,7 @@ echo "      location: <region>" >> /root/.juju/environments.yaml
 echo "      management-subscription-id: <subscription_id>" >> /root/.juju/environments.yaml
 echo "      management-certificate-path: <management_certificate_path>" >> /root/.juju/environments.yaml
 echo "      storage-account-name: <storage_account_name>" >> /root/.juju/environments.yaml
+echo "      availability-sets-enabled: false" >> /root/.juju/environments.yaml
 
 
 
