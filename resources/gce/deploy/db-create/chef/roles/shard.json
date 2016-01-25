@@ -40,7 +40,7 @@
   "run_list": [
     "recipe[chef-client::default]",
     "recipe[mongodb3::default]",
-    "recipe[mongodb3::mms-monitoring-agent]"
+    "recipe[mongodb3::mms_monitoring_agent]"
   ],
   "env_run_lists": {
   }
