@@ -66,7 +66,7 @@ echo " Starting chef add node : 'role[shard]' on host : ${fqdn}"
 knife bootstrap  ${fqdn} -i /root/.juju/ssh/juju_rsa_id --ssh-user ubuntu --sudo -r 'role[shard]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_primary\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_primary} role[shard]  "; exit 2; }
 echo " Successfully finished chef install 'role[shard]'  on host : ${fqdn}"
 
-for j in {1..<shard_repl_number>} 
+for ((j=1; j <= <shard_repl_number>; j++))
 do
 	echo " Starting deploy of primary-replicaset${j}"
 	if [ ! $(juju status --format tabular | grep "primary-replicaset${j}/" | awk '{print $7}') ]; then
