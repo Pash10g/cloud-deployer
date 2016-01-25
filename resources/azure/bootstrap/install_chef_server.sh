@@ -19,7 +19,8 @@ export INSTALLATION_LOG=/var/log/chef-server_install_$(date +"%m-%d-%Y--%T").log
 #https://aa1202storage.blob.core.windows.net/services/chef/chef-chef-server-core_12.0.5-1_amd64.deb
 CHEF_SERVER_DEB_URL=$1
 ADMIN_USER=$2
-PASSWORD=$3  
+PASSWORD=$3
+HOST=$4
 
 function log () {
 	if [ $# -ne 0 ]; then
@@ -79,7 +80,7 @@ function main () {
 	
 	HOSTNAME=$(hostname)
 	
-	echo "server_name = \"$(hostname).cloudapp.net\"" >> /etc/opscode/chef-server.rb
+	echo "server_name = \"$HOST"" >> /etc/opscode/chef-server.rb
 	echo "api_fqdn = server_name " >> /etc/opscode/chef-server.rb
 	echo "bookshelf['vip'] = server_name " >> /etc/opscode/chef-server.rb
 	echo "nginx['url'] = \"https://#{server_name}\"" >> /etc/opscode/chef-server.rb
