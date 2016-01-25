@@ -29,11 +29,11 @@ The vendors is one of the supported vnedors :
    "client_id": "xxxxxxxxxxxxxx"
    }
   - PROJECT_ID (Google GCE project_id you would like to use)
-- azure - Azure cloud (see https://launchpad.net/juju-core/1.26/1.26-alpha3 "azure provider changes")
+- azure - Azure cloud (see https://jujucharms.com/docs/stable/config-azure)
   * Mandatory params which should be set in config/azure/properties.conf are :
   - APPLICATION_ID (application id recieved during Azure AD init)
-  - APPLICATION_PASSWORD (application password provided during Azure AD init)
-  - TENANT_ID (azure tenant id)
+  - MANAGEMENT_CERTIFICATE_PATH (application password provided during Azure AD init)
+  - STORAGE_ACCOUNT_NAME (azure storage  account name [must be the same region as location] )
   - SUBSCRIPTION_ID ( azure subscritption id)
   
 The steps :
