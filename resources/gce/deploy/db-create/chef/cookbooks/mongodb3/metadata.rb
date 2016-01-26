@@ -1,6 +1,6 @@
 name             'mongodb3'
-maintainer       'Sunggun Yu'
-maintainer_email 'sunggun.dev@gmail.com'
+maintainer       'Pavel.Duchovny'
+maintainer_email 'pash10g@gmail.com'
 license          'Apache 2.0'
 description      'Installs/Configures mongodb3'
 long_description 'Installs/Configures mongodb3'
