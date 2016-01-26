@@ -29,4 +29,5 @@ pass:SYSTEM_PASSWORD
 param:MONGO_VERSION
 param:DIST_VERSION
 pass:MMS_API_KEY
+param:MMS_GROUP_ID
 activate_identifier:CLUSTER_NAME
