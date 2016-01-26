@@ -25,6 +25,7 @@
 <shard_port>=SHARD_PORT
 <configsvr_port>=CONFIGSVR_PORT
 <system_name>=SYSTEM_NAME
+<mms_api_key>=MMS_API_KEY
 <system_password>=SYSTEM_PASSWORD
 <mongo_version>=MONGO_VERSION
 <dist_version>=DIST_VERSION
