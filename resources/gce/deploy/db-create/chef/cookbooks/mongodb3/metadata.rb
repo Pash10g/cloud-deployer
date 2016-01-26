@@ -14,5 +14,6 @@ supports 'oracle', '= 6.6'
 supports 'amazon'
 
 depends 'apt'
-depends 'yum'
+#depends 'yum'
 depends 'user'
+#depends 'runit', '~> 1.7.0'
