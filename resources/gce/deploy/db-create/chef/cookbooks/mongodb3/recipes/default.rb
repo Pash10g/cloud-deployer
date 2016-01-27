@@ -60,7 +60,9 @@ execute "stup huge pages init.d" do
     		command "sudo update-rc.d disable-transparent-hugepages defaults;/etc/init.d/disable-transparent-hugepages start"
     		not_if "cat /sys/kernel/mm/transparent_hugepage/enabled | grep 'always madvise [never]' "
 end
-
+if node['mongodb3']['config']['mongod']['replication']['replSetName']  =~ /none/
+  node.override['mongodb3']['config']['mongod']['replication']['replSetName'] = nil
+end
 
 # Update the mongodb config file
 template node['mongodb3']['mongod']['config_file'] do
