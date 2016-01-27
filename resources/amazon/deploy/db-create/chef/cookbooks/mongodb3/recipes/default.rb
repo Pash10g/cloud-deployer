@@ -56,10 +56,30 @@ template '/etc/init.d/disable-transparent-hugepages' do
   mode 755
 end
 
-execute "stup huge pages init.d" do
+execute "setup huge pages init.d" do
     		command "sudo update-rc.d disable-transparent-hugepages defaults;/etc/init.d/disable-transparent-hugepages start"
     		not_if "cat /sys/kernel/mm/transparent_hugepage/enabled | grep 'always madvise [never]' "
 end
+
+#Setup ulimits
+execute "setup ulimit changes -n" do
+    		command "sudo ulimit -n 64000"
+    		not_if "ulimit -n | grep '64000' "
+    		owner 'root'
+    		group 'root'
+    		notifies :restart, 'service[mongod]', :delayed
+end
+
+
+execute "setup ulimit changes -u" do
+    		command "sudo ulimit -u 64000"
+    		not_if "ulimit -u | grep '64000' "
+    		owner 'root'
+    		group 'root'
+    		notifies :restart, 'service[mongod]', :delayed
+end
+
+
 if node['mongodb3']['config']['mongod']['replication']['replSetName']  =~ /none/
   node.override['mongodb3']['config']['mongod']['replication']['replSetName'] = nil
 end
