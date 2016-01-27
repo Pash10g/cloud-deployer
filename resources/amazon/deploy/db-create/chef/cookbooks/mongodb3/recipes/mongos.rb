@@ -36,6 +36,21 @@ user node['mongodb3']['user'] do
   action :create
 end
 
+#Setup mongos service
+template '/etc/init/mongos-service.conf' do
+	source 'mongos-service.conf.erb'
+	owner 'root'
+	group 'root'
+	notifies :run, 'execute[initctl run]', :immediate
+end
+
+execute "initctl run" do
+	command "sudo initctl list"
+	action :nothing
+end
+
+
+
 # Create mongodb configsvr configuration 
 config_nodes = search(:node, "role:configsvr")
 config_rs_delim = ""
@@ -75,7 +90,7 @@ end
 
 # Create the Mongos config file
 node.override['mongodb3']['config']['mongos']['sharding']['configDB'] = config_servers 
-template node['mongodb3']['mongos']['config_file'] do
+template node['mongodb3']['C']['config_file'] do
   source 'mongodb.conf.erb'
   owner node['mongodb3']['user']
   mode 0644
@@ -92,20 +107,12 @@ directory File.dirname(node['mongodb3']['config']['mongos']['systemLog']['path']
   recursive true
 end
 
-# Install runit service package
-# packagecloud cookbook is not working for oracle linux.
 
-# Adding `mongos` service with runit
-#service 'mongos' do
-#  supports :status => true, :start => true, :stop => true, :restart => true
-#  action [:enable,:start]
-#  subscribes :restart, node['mongodb3']['mongos']['config_file'] , :delayed
-#end
-
-execute 'mongos start' do
-	command "mongos --config /etc/mongos.conf --fork"
-	user node['mongodb3']['user']
-	not_if 'ps -ef | grep "mongos --config /etc/mongos.conf --fork" | grep -v "grep"'
+# Start the mongos service
+service 'mongos-service' do
+  supports :start => true, :stop => true, :restart => true, :status => true
+  action [:enable,:start]
+  subscribes :restart, "template[#{node['mongodb3']['mongos']['config_file']}]", :delayed
 end
 
 shard_nodes =  search(:node, "role:shard")
