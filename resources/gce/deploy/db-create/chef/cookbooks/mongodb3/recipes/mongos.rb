@@ -113,7 +113,7 @@ shard_nodes =  search(:node, "role:shard")
 shard_nodes.each do |cnode|
    
    repl_set_name = cnode['mongodb3']['config']['mongod']['replication']['replSetName']
-   if not (repl_set_name == "none" or repl_set_name.nil?)
+   if not (repl_set_name =~ /none/ or repl_set_name.nil?)
    	prefix = "#{repl_set_name}/"
    else
    	prefix = ""
