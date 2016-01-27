@@ -90,7 +90,7 @@ end
 
 # Create the Mongos config file
 node.override['mongodb3']['config']['mongos']['sharding']['configDB'] = config_servers 
-template node['mongodb3']['C']['config_file'] do
+template node['mongodb3']['mongos']['config_file'] do
   source 'mongodb.conf.erb'
   owner node['mongodb3']['user']
   mode 0644
