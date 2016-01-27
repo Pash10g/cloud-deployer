@@ -2,7 +2,7 @@
 # Cookbook Name:: mongodb3
 # Recipe:: default
 #
-# Copyright 2015, Sunggun Yu
+# Copyright 2015, Sunggun Yu and Pavel Dychovny
 #
 # Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
@@ -113,7 +113,7 @@ shard_nodes =  search(:node, "role:shard")
 shard_nodes.each do |cnode|
    
    repl_set_name = cnode['mongodb3']['config']['mongod']['replication']['replSetName']
-   if not (repl_set_name == "none" or repl_set_name.nil?)
+   if not (repl_set_name =~ /none/ or repl_set_name.nil?)
    	prefix = "#{repl_set_name}/"
    else
    	prefix = ""
