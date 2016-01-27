@@ -40,7 +40,7 @@
   "run_list": [
     "recipe[chef-client::default]",
     "recipe[mongodb3::default]"
-    <mss-recipe>
+    <mms-recipe>
   ],
   "env_run_lists": {
   }
