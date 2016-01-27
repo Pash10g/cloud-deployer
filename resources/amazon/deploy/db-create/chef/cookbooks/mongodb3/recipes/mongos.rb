@@ -53,6 +53,7 @@ end
 
 # Create mongodb configsvr configuration 
 config_nodes = search(:node, "role:configsvr")
+config_nodes = config_nodes.sort do |f, s| f.ipaddress <=> s.ipaddress end
 config_rs_delim = ""
 conf_repl_set_name = config_nodes.first['mongodb3']['config']['mongod']['replication']['replSetName']
 if conf_repl_set_name == 'none' or  config_nodes.first['mongodb3']['package']['version'].to_s < "3.2.0" or conf_repl_set_name.nil? 
