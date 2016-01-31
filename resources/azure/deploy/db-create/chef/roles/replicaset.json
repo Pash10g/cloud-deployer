@@ -13,7 +13,7 @@
 		    "port" : <shard_port>
 		  },
 		  "storage" : {
-            "dbPath" : "/var/lib/mongodb/wiredTiger",
+            "dbPath" : "/srv/data/wiredTiger",
             "engine" : "wiredTiger",
             "wiredTiger" : {
               "engineConfig" : {
