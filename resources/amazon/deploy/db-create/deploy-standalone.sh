@@ -88,7 +88,7 @@ if [ ! $(juju status --format tabular | grep "primary/" | awk '{print $7}') ]; t
 	echo "  primary_port : <shard_port>" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 	echo "  machine: machine-${machine_no}" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 	echo "  FQDN: ${fqdn} " >> /tmp/standalone-<env_name>-mongo-conf.yaml
-	add_log_data "<shard_data_disk>" "<shard_log_disk>" disk_size 
+	add_log_data "<shard_data_disk>" "<shard_journal_disk>" disk_size 
 	echo "Setting up machine : ${fqdn} with /srv/data disk size of : $disk_size "
 	juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node  "primary" --storage data="${disk_size}" --to $machine_no 
 
@@ -115,7 +115,7 @@ do
 		echo "    primary_replicaset_port : <shard_port>" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 		echo "    machine: machine-${machine_no}" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 		echo "    FQDN: ${fqdn} " >> /tmp/standalone-<env_name>-mongo-conf.yaml
-		add_log_data "<shard_data_disk>" "<shard_log_disk>" disk_size 
+		add_log_data "<shard_data_disk>" "<shard_journal_disk>" disk_size 
 		echo "Setting up machine : ${fqdn} with /srv/data disk size of : $disk_size "
 		juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node  "primary-replicaset${j}" --storage data="${disk_size}"   --to $machine_no 
 
