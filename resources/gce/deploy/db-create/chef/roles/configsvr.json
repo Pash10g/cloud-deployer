@@ -13,7 +13,7 @@
             "port" : <configsvr_port>
           },
 	  "storage" : {
-            "dbPath" : "/var/lib/mongodb/wiredTiger",
+            "dbPath" : "/srv/data/wiredTiger",
             "engine" : "wiredTiger",
             "wiredTiger" : {
               "engineConfig" : {
@@ -46,6 +46,7 @@
   "run_list": [
     "recipe[chef-client::default]",
     "recipe[mongodb3::default]"
+    <mms-recipe>
   ],
   "env_run_lists": {
   }
