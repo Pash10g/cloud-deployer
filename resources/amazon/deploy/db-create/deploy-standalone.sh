@@ -2,7 +2,7 @@
 
 set -e
 
-
+# This function is calculating the need data disk
 function add_log_data
 {
         data=$1
