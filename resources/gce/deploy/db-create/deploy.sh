@@ -7,6 +7,41 @@
 ####################
 set -e
 
+# This function is calculating the need data disk
+function add_log_data
+{
+        data=$1
+        data_prefix=${data:(-1)}
+        data_size=$(echo $data | sed s#${data_prefix}##g)
+        case "$data_prefix" in
+        "T")
+                data_size=`expr $data_size \* 1024 \* 1024`
+        ;;
+        "G")
+                data_size=`expr $data_size \* 1024 `
+        ;;
+        "M")
+                data_size=$data_size
+        ;;
+        esac
+        log=$2
+        log_prefix=${log:(-1)}
+        log_size=$(echo $log | sed s#${log_prefix}##g)
+        case "$log_prefix" in
+        "T")
+                log_size=`expr $log_size \* 1024 \* 1024`
+        ;;
+        "G")
+                log_size=`expr $log_size \* 1024`
+        ;;
+        "M")
+                log_size=$log_size
+        ;;
+        esac
+        total_size=`expr $data_size + $log_size`
+        eval "$3=${total_size}M"
+}
+
 ## Deploy vm function
 function deploy_vm {
 	# Recieve vm constraints (characteristics) and provision it
@@ -76,10 +111,11 @@ do
 		echo "  config_server_port : <configsvr_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  machine: ${machine}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		
+		add_log_data "<configsvr_data_disk>" "<configsvr_journal_disk>" disk_size
 		# Deploy any juju specifics to the vm (open ports, etc.)	
-		 juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node "configsvr${i}"  --to $machine_no 
-		
+		echo "Setting up machine : ${fqdn} with /srv/data disk size of : $disk_size "
+		juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node  "configsvr${i}" --storage data="${disk_size}" --to $machine_no 
+
 		# Exopose the service to the outside world
 		echo "Exposing configsvr${1}"
 		juju expose "configsvr${i}"
@@ -151,7 +187,9 @@ do
 		echo "  shard_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		 juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node "shard${i}"  --to $machine_no 
+		add_log_data "<shard_data_disk>" "<shard_journal_disk>" disk_size 
+		echo "Setting up machine : ${fqdn} with /srv/data disk size of : $disk_size "
+		juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node  "shard${i}" --storage data="${disk_size}" --to $machine_no 
 	
 		echo "Exposing shard${i}"
 		juju expose "shard${i}"
@@ -184,7 +222,9 @@ do
 			echo "    shard_replicaset_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 			echo "    machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 			echo "    FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-			 juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node "shard${i}-replicaset${j}"  --to $machine_no 
+			add_log_data "<shard_data_disk>" "<shard_journal_disk>" disk_size 
+			echo "Setting up machine : ${fqdn} with /srv/data disk size of : $disk_size "
+			juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node  "shard${i}-replicaset${j}" --storage data="${disk_size}" --to $machine_no 
 	
 			echo "Exposing  shard${i}-replicaset${j}"
 			juju expose "shard${i}-replicaset${j}"
