@@ -13,7 +13,7 @@ The main directory has a main run file called : run_deployer.py.
 
 ./run_deployer.py [-h] [-m MODE ] -s STEP -V VENDOR.
 
-The vendors is one of the supported vnedors :
+The vendors is one of the supported vendors :
 - amazon - AWS (see : https://jujucharms.com/docs/stable/config-aws for input configuration)
   * Mandatory params which should be set in config/amazon/properties.conf are :
   - ACCES_KEY (your aws access key)
