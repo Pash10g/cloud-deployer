@@ -10,6 +10,7 @@ juju switch "<env_name>"  || { echo "ERROR While setting env <env_name> "; exit 
 juju docean bootstrap -v  --constraints="mem=2G " || { echo "ERROR While bootstraping juju env <env_name> "; exit 2; }
 
 machine_no="0"
+echo "Waiting for machine to start... (current : pending)"
 sleep 1m
 export machine_status="$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $2}')"
 
@@ -21,7 +22,7 @@ while [ "$machine_status" =  "pending" ]; do
 done
 
 if [ "$machine_status" = "started" ]; then
-	bootstarp_node="$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $3}')"
+	bootstarp_node="$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')"
 else
 	exit 2
 fi
