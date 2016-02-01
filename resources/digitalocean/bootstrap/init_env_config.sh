@@ -15,6 +15,7 @@ fi
 
 sudo apt-get install juju python-pip -y
 sudo pip install juju-docean  || { echo "ERROR installing digitalocean API "; exit 2 ;}
+sudo pip install -U juju-docean || { echo "ERROR installing digitalocean API "; exit 2 ;}
 
 if [ -f /root/.juju/environments/<env_name>.json ]; then
 	rm  /root/.juju/environments/<env_name>.json
