@@ -56,11 +56,15 @@ template '/etc/init.d/disable-transparent-hugepages' do
   mode 755
 end
 
-execute "stup huge pages init.d" do
+execute "setup huge pages init.d" do
     		command "sudo update-rc.d disable-transparent-hugepages defaults;/etc/init.d/disable-transparent-hugepages start"
     		not_if "cat /sys/kernel/mm/transparent_hugepage/enabled | grep 'always madvise [never]' "
 end
 
+
+if node['mongodb3']['config']['mongod']['replication']['replSetName']  =~ /none/
+  node.override['mongodb3']['config']['mongod']['replication']['replSetName'] = nil
+end
 
 # Update the mongodb config file
 template node['mongodb3']['mongod']['config_file'] do
@@ -86,7 +90,7 @@ sleep(60)
 
 # Setup replica initiation
 repl_set_name = node['mongodb3']['config']['mongod']['replication']['replSetName']
-if not (repl_set_name == 'none' or repl_set_name.nil?) and node.role?('shard')
+if not (repl_set_name =~ /none/ or repl_set_name.nil?) and node.role?('shard')
     id_no = 0
     config_rs_init_clause = "{ _id: #{id_no}, host: \"#{node["ipaddress"]}:#{node['mongodb3']['config']['mongod']['net']['port']}\"}"
     execute "add initial replicaset for shard #{node['ipaddress']}" do
