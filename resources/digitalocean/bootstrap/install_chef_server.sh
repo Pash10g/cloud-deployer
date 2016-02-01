@@ -79,7 +79,7 @@ function main () {
 	
 	HOSTNAME=$(hostname)
 	
-	echo "server_name = \"${HOSTNAME}\"" >> /etc/opscode/chef-server.rb
+	echo "server_name = \"$(wget http://ipecho.net/plain -O - -q ; echo)\"" >> /etc/opscode/chef-server.rb
 	echo "api_fqdn = server_name " >> /etc/opscode/chef-server.rb
 	echo "bookshelf['vip'] = server_name " >> /etc/opscode/chef-server.rb
 	echo "nginx['url'] = \"https://#{server_name}\"" >> /etc/opscode/chef-server.rb
