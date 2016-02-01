@@ -42,7 +42,7 @@ sleep 50s
 
 juju scp $machine_no:/tmp/\*.pem /root/.chef/  || { echo "ERROR Copying chef server credentials to /root/.chef/ "; exit 2; }
 
-juju set-constraints "cpu-cores=1,,mem=1G"
+juju set-constraints "cpu-cores=1 mem=1G"
 
 rm /root/.ssh/known_hosts
 
