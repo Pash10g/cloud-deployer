@@ -12,6 +12,7 @@ if ! which knife 2>&1; then
 	curl -L https://www.opscode.com/chef/install.sh | sudo bash
 fi
  
+mkdir -p /root/.chef 
 
 sudo apt-get install juju python-pip -y
 sudo pip install juju-docean  || { echo "ERROR installing digitalocean API "; exit 2 ;}
