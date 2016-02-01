@@ -12,7 +12,7 @@ function deploy_vm {
 	# Recieve vm constraints (characteristics) and provision it
 	constraints=$1
 	echo " Lunching machine  constraints : ${constraints}"
-	export machine_no=$(juju docean add-machine  --constraints="$constraints" 2>/dev/null | tail -n 1 | awk '{print $3}') #|| {echo "failed to init machine constraints $constraints "; exit 2}
+	export machine_no=$(juju docean add-machine  --constraints="$constraints"  | grep 'mid:' | cut -d " " -f 7 ) #|| {echo "failed to init machine constraints $constraints "; exit 2}
 	echo "Machine successfuly lunched , machine-no : ${machine_no} "
 	sleep 1m
 	# Check provision status
