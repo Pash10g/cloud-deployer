@@ -37,7 +37,7 @@ The vendors is one of the supported vnedors :
   
 The steps :
 - init-bootstrap - lunches juju and chef server on the desired cloud.
-- deploy - deploys the mongodb cluster [ if the nodes are present it reconfigures them and adds any aditional members of the cluster if expanded ]
+- deploy - deploys the mongodb cluster [ if the nodes are present it reconfigures them and adds any additional members of the cluster if expanded ]
 - deploy-standalone - deploys mongodb stand alone instance [ uses "SHARD_*" configuration and intiates replicas if stated]
 - destroy-env - drops all machines and services from the environment
 
