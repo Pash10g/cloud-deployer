@@ -3,7 +3,7 @@
 
 if ! (which juju 2>/dev/null); then
 	echo "Installing Juju.. "
-	sudo add-apt-repository ppa:juju/devel -y
+	sudo add-apt-repository ppa:juju/stable -y
 	sudo apt-get update && sudo apt-get install juju-core -y
 fi
 
@@ -22,7 +22,7 @@ fi
 
 echo "Genrating juju configuration for env : '<env_name>'"
 juju generate-config -f 
-cp "" > /root/.juju/environments.yaml
+echo "" > /root/.juju/environments.yaml
 
 
 echo "    <env_name>:" >> /root/.juju/environments.yaml
