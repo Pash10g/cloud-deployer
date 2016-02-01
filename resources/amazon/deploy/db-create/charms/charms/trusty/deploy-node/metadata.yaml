@@ -20,10 +20,3 @@ storage:
     read-only: false # not yet supported, see description below
     minimum-size: 100M
     location: /srv/data
-  log:
-    type: filesystem
-    description: log storage
-    shared: false # not yet supported, see description below
-    read-only: false # not yet supported, see description below
-    minimum-size: 100M
-    location: /srv/log
