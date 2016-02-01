@@ -24,7 +24,9 @@ echo "Genrating juju configuration for env : '<env_name>'"
 juju generate-config -f 
 echo "" > /root/.juju/environments.yaml
 
-
+echo "default: <env_name>" >> /root/.juju/environments.yaml
+echo "environments:" >> /root/.juju/environments.yaml
+echo " " >> /root/.juju/environments.yaml
 echo "    <env_name>:" >> /root/.juju/environments.yaml
 echo "      type: manual" >> /root/.juju/environments.yaml
 echo "      bootstrap-host: null" >> /root/.juju/environments.yaml
