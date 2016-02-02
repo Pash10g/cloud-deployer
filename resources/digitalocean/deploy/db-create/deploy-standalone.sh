@@ -71,7 +71,7 @@ echo "" > /tmp/standalone-<env_name>-mongo-conf.yaml
 		echo "  shard_port : <shard_port>" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 		echo "  machine: machine-${machine_no}" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 		echo "  FQDN: ${fqdn} " >> /tmp/standalone-<env_name>-mongo-conf.yaml
-		juju deploy /root/.juju/charms/trusty/deploy-node "primary" --series trusty --to $machine_no 
+		juju deploy --repository=/root/.juju/charms local:trusty/deploy-node /root/.juju/charms/trusty/deploy-node "primary" --to $machine_no 
 	
 		echo "Exposing primary"
 		juju expose "primary"
@@ -103,7 +103,7 @@ echo "" > /tmp/standalone-<env_name>-mongo-conf.yaml
 			echo "    shard_replicaset_port : <shard_port>" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 			echo "    machine: machine-${machine_no}" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 			echo "    FQDN: ${fqdn} " >> /tmp/standalone-<env_name>-mongo-conf.yaml
-			juju deploy /root/.juju/charms/trusty/deploy-node "primary-replicaset${j}" --series trusty --to $machine_no 
+			juju deploy --repository=/root/.juju/charms local:trusty/deploy-node "primary-replicaset${j}"  --to $machine_no 
 	
 			echo "Exposing  primary-replicaset${j}"
 			juju expose "primary-replicaset${j}"
