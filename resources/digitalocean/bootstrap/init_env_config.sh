@@ -40,3 +40,17 @@ echo "export  DO_OAUTH_TOKEN=\"<ac_key>\"" >> ~/.bashrc
 echo "export DO_SSH_KEY=\"<ssh_key_name>\""  >> ~/.bashrc
 source ~/.bashrc
 
+if [ -f /root/.juju/ssh/juju_id_rsa  ]; then
+	echo "Copying juju keys to the main '/root/.ssh/' dir "
+	cp /root/.juju/ssh/juju_* /root/.ssh/
+	echo "backing up original ssh keys to /tmp/backup_ssh"
+	mkdir -p /tmp/backup_ssh 
+	if [ -f /root/.ssh/id_rsa ]; then
+		mv /root/.ssh/id_rsa /tmp/backup_ssh/
+		mv /root/.ssh/id_rsa.pub /tmp/backup_ssh/
+	fi
+	mv  /root/.ssh/juju_id_rsa /root/.ssh/id_rsa
+	mv  /root/.ssh/juju_id_rsa.pub /root/.ssh/id_rsa.pub
+	echo "If bootstrap fails on the ssh key please verify you have upladed the : /root/.ssh/id_rsa.pub to digital ocean console and verified that you provided the correct SSH_KEY_NAME parameter"
+fi
+	
