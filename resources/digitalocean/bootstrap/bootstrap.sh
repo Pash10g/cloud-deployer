@@ -7,7 +7,7 @@ export BASE_DIR=`dirname $FULLPATH_SCRIPT`
 
 juju switch "<env_name>"  || { echo "ERROR While setting env <env_name> "; exit 2; }
 
-juju docean bootstrap -v  --constraints="mem=2G " || { echo "ERROR While bootstraping juju env <env_name> "; exit 2; }
+juju docean bootstrap -v  --constraints="mem=2G " || { echo "ERROR While bootstraping juju env <env_name> \n Warning! If bootstrap fails on the ssh key please verify you have upladed the : /root/.ssh/id_rsa.pub to digital ocean console and verified that you provided the correct SSH_KEY_NAME parameter"; exit 2; }
 
 machine_no="0"
 echo "Waiting for machine to start... (current : pending)"
