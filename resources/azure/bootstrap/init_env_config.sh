@@ -8,6 +8,8 @@ if ! which juju 2>/dev/null; then
 	sudo apt-get update && sudo apt-get install juju-core -y
 fi
 
+sudo apt-get  install curl -y
+
 if ! which knife 2>/dev/null; then
 	echo "Installing chef workstation..."
 	curl -L https://www.opscode.com/chef/install.sh | sudo bash
