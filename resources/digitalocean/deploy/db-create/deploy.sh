@@ -77,7 +77,7 @@ do
 		echo "  FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		
 		# Deploy any juju specifics to the vm (open ports, etc.)	
-		juju deploy /root/.juju/charms/trusty/deploy-node "configsvr${i}" --series trusty --to $machine_no 
+		juju deploy --repository=/root/.juju/charms local:trusty/deploy-node "configsvr${i}"  --to $machine_no 
 		
 		# Exopose the service to the outside world
 		echo "Exposing configsvr${1}"
@@ -112,7 +112,7 @@ do
 	        echo "  machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 	        echo "  FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 	        # Deploy any juju specifics to the vm (open ports, etc.)
-		juju deploy /root/.juju/charms/trusty/deploy-node "mongos${i}" --series trusty --to $machine_no 
+		juju deploy --repository=/root/.juju/charms local:trusty/deploy-node "mongos${i}"  --to $machine_no 
 	
 		echo "Exposing mongos${1}"
 		juju expose "mongos${i}"
@@ -148,7 +148,7 @@ do
 		echo "  shard_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		juju deploy /root/.juju/charms/trusty/deploy-node "shard${i}" --series trusty --to $machine_no 
+		juju deploy --repository=/root/.juju/charms local:trusty/deploy-node "shard${i}"  --to $machine_no 
 	
 		echo "Exposing shard${i}"
 		juju expose "shard${i}"
@@ -180,7 +180,7 @@ do
 			echo "    shard_replicaset_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 			echo "    machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 			echo "    FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-			juju deploy /root/.juju/charms/trusty/deploy-node "shard${i}-replicaset${j}" --series trusty --to $machine_no 
+			juju deploy --repository=/root/.juju/charms local:trusty/deploy-node  "shard${i}-replicaset${j}"  --to $machine_no 
 	
 			echo "Exposing  shard${i}-replicaset${j}"
 			juju expose "shard${i}-replicaset${j}"
