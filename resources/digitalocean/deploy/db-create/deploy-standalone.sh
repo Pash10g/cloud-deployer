@@ -37,6 +37,8 @@ function deploy_vm {
 FULLPATH_SCRIPT=`readlink -f "$0"`
 export BASE_DIR=`dirname $FULLPATH_SCRIPT`
 
+source ~/.bashrc
+
 # Set juju env
 juju switch "<env_name>"  || { echo "ERROR While setting env <env_name> "; exit 2; }
 
