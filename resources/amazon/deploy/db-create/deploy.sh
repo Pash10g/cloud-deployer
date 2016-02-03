@@ -221,7 +221,7 @@ do
 	 		echo "    shard_replica_set_name : <shard_repl_set_name>_shard${i}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 			echo "    shard_replicaset_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 			echo "    machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-			echo "    FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+			echo "    ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 			add_log_data "<shard_data_disk>" "<shard_journal_disk>" disk_size 
 			echo "Setting up machine : ${fqdn} with /srv/data disk size of : $disk_size "
 			juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node  "shard${i}-replicaset${j}" --storage data="${disk_size}" --to $machine_no 
@@ -236,7 +236,7 @@ do
 	 		echo "    shard_replica_set_name : <shard_repl_set_name>_shard${i}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 			echo "    shard_replicaset_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 			echo "    machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-			echo "    FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+			echo "    ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		fi
 		#Bootstrap chef configuration with role replicaset on the VM providing relevant configuration
 		echo " Starting chef add node : 'role[replicaset]' on host : ${fqdn}"	
