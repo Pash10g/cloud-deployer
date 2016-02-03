@@ -11,9 +11,9 @@ Currently the workstation that runs the client side can be only Ubuntu (OS X is 
 #Usage :
 The main directory has a main run file called : run_deployer.py.
 
-./run_deployer.py [-h] [-m MODE ] -s STEP -V VENDOR.
+./run_deployer.py [-h] [-m MODE ] -s STEP -C CLOUD.
 
-The vendors is one of the supported vendors :
+The cloud is one of the supported clouds :
 - amazon - AWS (see : https://jujucharms.com/docs/stable/config-aws for input configuration)
   * Mandatory params which should be set in config/amazon/properties.conf are :
   - ACCES_KEY (your aws access key)
@@ -34,7 +34,7 @@ The vendors is one of the supported vendors :
   - MANAGEMENT_CERTIFICATE_PATH (Certificate full path name of azure.pem from which azure.crt were uploaded [as stated in the manual] )
   - STORAGE_ACCOUNT_NAME (azure storage  account name [must be the same region as "REGION" value] )
   - SUBSCRIPTION_ID ( azure subscritption id)
-- digitalocean - Digital ocean cloud  (see  https://jujucharms.com/docs/stable/config-digital)
+- digitalocean - Digital ocean cloud  (see  https://jujucharms.com/docs/stable/config-digitalocean)
  * Mandatory params which should be set in config/digitalocean/properties.conf are :
  - AC_KEY  ( Digital ocean oath key from the API configuration)
  - SSH_KEY_NAME (ssh public key name provided after upload  to digital ocean console  [ found under /root/.juju/ssh/juju_id_rsa.pub ])
@@ -62,13 +62,13 @@ Make sure that all files are executable and you have sudo permissions .
 gce Example:
 - place all needed info in the properties file 
 
-Run : ./run_deployer.py -m x -s init-bootstrap -v gce
+Run : ./run_deployer.py -m x -s init-bootstrap -c gce
 
-Run : ./run_deployer.py -m x -s deploy -v gce
+Run : ./run_deployer.py -m x -s deploy -c gce
 
 To delete env:
 
-Run : ./run_deployer.py -m x -s destroy-env -v gce
+Run : ./run_deployer.py -m x -s destroy-env -c gce
 
 
 Thats it!
