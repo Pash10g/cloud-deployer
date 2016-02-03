@@ -3,7 +3,7 @@ This project deploys mongodb  clusters on several supported clouds using JujuCha
 
 # Introduction
 
-The project is build on both python and bash capabilities to perform mongodb cluster deployment cross several supported vendors (Currently Google Cloud and AWS).
+The project is build on both python and bash capabilities to perform mongodb cluster deployment cross several supported vendors (Currently Google Cloud, AWS, Azure, Digital ocean).
 It utilizes juju and chef technologies in order to deploy and configure the machines accross several clouds.
 
 Currently the workstation that runs the client side can be only Ubuntu (OS X is on the way).
