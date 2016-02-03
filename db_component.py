@@ -107,11 +107,11 @@ class DbComponent:
                 process = subprocess.Popen(run_util, shell=True,
                            stdout=logpipe, 
                            stderr=logpipe)
-				# wait for the process to terminate
+		# wait for the process to terminate
                 out, err = process.communicate()
                 ret_code = process.returncode
 		logpipe.close()
-		#errpipe.close()
+
                 if ret_code != 0 :
                     if not self.error_handling.ignored_error_list:
                         out_file = config.read_file_content(os.environ.get("LOG_FILE"))
@@ -189,8 +189,6 @@ class DbComponent:
             tmp_plcholders_map=self.get_placeholders_mapping().items()
             tmp_script_map=self.get_script_order()
             for key, value in  tmp_plcholders_map:
-               ## try:
-               ## logging.info("replacing placeholder {} ".format(key))
                     for script in tmp_script_map:
                         
                         current_script =  self.run_base_dir + path_sep + script.script_file.replace("/",path_sep)
@@ -222,8 +220,7 @@ class DbComponent:
                         self.replace_string_in_path(current_script,replaced_key,replaced_value)
                         logging.debug("replacing {} with {} in file {} ".format(replaced_key,replaced_value,self.activation_dir))
                         self.replace_string_in_path(self.activation_dir,replaced_key,replaced_value)
-               # except Exception as e:
-               #     raise DbException("Error in replacing file {} placeholder {} ".format(current_script,replaced_key))
+
                 
                       
              
