@@ -115,7 +115,7 @@ def get_map_input(prefix,param_name,step_config_full_file,mode):
 	elif re.search("^util", prefix):
 		param_name = param_name.split(";")
 		logging.info("utility : {}".format(param_name))
-		param_ret = {"-util":param_name}
+		param_ret = {"util":param_name}
 	elif re.search("^activate_identifier", prefix):
 		logging.info("activate_identifier : {}".format(param_name))
 		param_ret = {prefix:param_name}
