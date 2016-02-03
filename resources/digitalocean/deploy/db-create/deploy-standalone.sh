@@ -73,7 +73,7 @@ echo "" > /tmp/standalone-<env_name>-mongo-conf.yaml
 		echo "  shard_port : <shard_port>" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 		echo "  machine: machine-${machine_no}" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 		echo "  FQDN: ${fqdn} " >> /tmp/standalone-<env_name>-mongo-conf.yaml
-		juju deploy --repository=/root/.juju/charms local:trusty/deploy-node /root/.juju/charms/trusty/deploy-node "primary" --to $machine_no 
+		juju deploy --repository=/root/.juju/charms local:trusty/deploy-node "primary" --to $machine_no 
 	
 		echo "Exposing primary"
 		juju expose "primary"
@@ -89,7 +89,7 @@ echo "" > /tmp/standalone-<env_name>-mongo-conf.yaml
 	fi
 	#Bootstrap chef configuration with role shard on the VM providing relevant configuration
 	echo " Starting chef add node : 'role[shard]' on host : ${fqdn}"	
-        knife bootstrap  ${fqdn}  -i /root/.juju/ssh/juju_id_rsa --ssh-user ubuntu --sudo -r 'role[shard]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_primary\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_shard} role[shard]  "; exit 2; }
+        knife bootstrap  ${fqdn}    --ssh-user root  --sudo -r 'role[shard]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_primary\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_shard} role[shard]  "; exit 2; }
 	echo " Successfully finished chef install 'role[shard]'  on host : ${fqdn}"
 	
 	for ((j=1; j <= <shard_repl_number>; j++))
@@ -121,7 +121,7 @@ echo "" > /tmp/standalone-<env_name>-mongo-conf.yaml
 		fi
 		#Bootstrap chef configuration with role replicaset on the VM providing relevant configuration
 		echo " Starting chef add node : 'role[replicaset]' on host : ${fqdn}"	
-		knife bootstrap  ${fqdn}  -i /root/.juju/ssh/juju_id_rsa --ssh-user ubuntu --sudo -r 'role[replicaset]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_primary\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${fqdn} role[replicaset]  "; exit 2; }
+		knife bootstrap  ${fqdn}    --ssh-user root  --sudo -r 'role[replicaset]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_primary\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${fqdn} role[replicaset]  "; exit 2; }
 
 		echo " Successfully finished chef install 'role[replicaset]'  on host : ${fqdn}"
 	done
@@ -129,7 +129,6 @@ done
 
 
 echo "########################################################################"
-echo "# Cluster deployment is finished ! "
-echo "# For deployed cluster info please see /tmp/standalone-<env_name>-mongo-conf.yaml "
+echo "# For deployed standalone info please see /tmp/standalone-<env_name>-mongo-conf.yaml "
 echo "# or run : juju status"
 echo "########################################################################"

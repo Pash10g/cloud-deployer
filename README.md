@@ -36,8 +36,8 @@ The vendors is one of the supported vendors :
   - SUBSCRIPTION_ID ( azure subscritption id)
 - digitalocean - Digital ocean cloud  (see  https://jujucharms.com/docs/stable/config-digital)
  * Mandatory params which should be set in config/digitalocean/properties.conf are :
- - DO_OAUTH_KEY  ( Digital ocean key from the API configuration)
- - DO_SSH_KEY_NAME (ssh public key name provided after upload  to digital ocean console  [ found under /root/.juju/ssh/juju_id_rsa.pub ])
+ - AC_KEY  ( Digital ocean oath key from the API configuration)
+ - SSH_KEY_NAME (ssh public key name provided after upload  to digital ocean console  [ found under /root/.juju/ssh/juju_id_rsa.pub ])
   
 The steps :
 - init-bootstrap - lunches juju and chef server on the desired cloud.
