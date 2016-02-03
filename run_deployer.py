@@ -36,7 +36,7 @@ def parse_args(base_dir):
 	str_vendors = os.linesep.join(supported_vendors)
 	parser = argparse.ArgumentParser(description="run deployer to deploy/upgrade the supported database", formatter_class=RawTextHelpFormatter)
 	parser.add_argument("-s","--step", help="The step to run :  " + os.linesep + str_steps , required=True)
-	parser.add_argument("-v","--vendor", help="Supported vendors :" + os.linesep + str_vendors, required=True)
+	parser.add_argument("-c","--cloud", help="Supported vendors :" + os.linesep + str_vendors, required=True)
 	parser.add_argument("-m", "--mode", help="Mode for the deployer to run: " + os.linesep +  "x : Use Properties.conf " + os.linesep + "i : Use interactive mode",type=config.is_mode_supported)
 	parser.add_argument("-lvl", "--log_level",default=logging.INFO, help="log level to run: DEBUG,INFO,ERROR,WARN",type=config.is_level_supported)
 	parser.add_argument("-d", "--dry_run",default=False,action='store_true' ,help="Specifying dry run only generates the scripts and not actually runs them")
@@ -70,7 +70,7 @@ def main():
 		os.mkdir(log_dir)
 
 	step = args.step
-	vendor = args.vendor
+	vendor = args.cloud
 	mode = args.mode
 	dry_run = args.dry_run
 	# set logger
@@ -81,7 +81,7 @@ def main():
 	
 	#Check input
 	if not config.is_configuration_supported(supported_vendors,vendor):
-		logging.error("No support for provided 'vendor' value : {}".format(vendor))
+		logging.error("No support for provided 'cloud' value : {}".format(vendor))
 		exit(1)
 	elif not config.is_configuration_supported(supported_steps,step):
 		logging.error("No support for provided 'step' value : {}".format(step))
