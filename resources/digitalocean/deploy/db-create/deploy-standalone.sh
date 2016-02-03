@@ -72,7 +72,7 @@ echo "" > /tmp/standalone-<env_name>-mongo-conf.yaml
 		echo "  shard_replica_set_name : <shard_repl_set_name>" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 		echo "  shard_port : <shard_port>" >> /tmp/standalone-<env_name>-mongo-conf.yaml
 		echo "  machine: machine-${machine_no}" >> /tmp/standalone-<env_name>-mongo-conf.yaml
-		echo "  FQDN: ${fqdn} " >> /tmp/standalone-<env_name>-mongo-conf.yaml
+		echo "  ip address: ${fqdn} " >> /tmp/standalone-<env_name>-mongo-conf.yaml
 		juju deploy --repository=/root/.juju/charms local:trusty/deploy-node "primary" --to $machine_no 
 	
 		echo "Exposing primary"
