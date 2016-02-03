@@ -93,7 +93,7 @@ function main () {
 	
 	log "Successfuly installed chef-server!"
 	echo " "
-	echo "Login into https://<public_ip> with the provided $ADMIN_USER credentials and download the knife.rb of the devopshz organization "
+	echo "Login into https://<public_ip> with the provided $ADMIN_USER credentials and download the knife.rb of the juju-deploy organization "
 	echo "Chef console admin user : admin"
 	echo "Password : mongodb123 "
 	echo "Please find the user pem : /tmp/$ADMIN_USER.pem, and organization validator pem : /tmp/${ADMIN_USER}-validator.pem "
