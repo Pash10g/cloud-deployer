@@ -33,19 +33,6 @@ class Script:
 		self.database_mapping = database_mapping
 		self.script_file = script_file 
 
-def read_config_dirs(resources_dir):
-	if os.path.exists(resources_dir):
-		all_dirs = os.listdir(resources_dir)
-		all_dirs.sort()
-		supported_dirs = []
-		for dir in all_dirs:
-			if not os.path.isfile(resources_dir + path_sep + dir):
-					supported_dirs.append(dir)
-	else:
-		raise DbException("folder {} was not found".format(resources_dir))
-	
-	return supported_dirs
-
 def read_file_content(file_name):
 	if os.path.exists(file_name):
 		with open(file_name) as f:
@@ -66,6 +53,21 @@ def is_configuration_supported(supported_config_obj,item):
 	else:
 		return False
 	
+
+def read_config_dirs(resources_dir):
+	if os.path.exists(resources_dir):
+		all_dirs = os.listdir(resources_dir)
+		all_dirs.sort()
+		supported_dirs = []
+		for dir in all_dirs:
+			if not os.path.isfile(resources_dir + path_sep + dir):
+					supported_dirs.append(dir)
+	else:
+		raise DbException("folder {} was not found".format(resources_dir))
+	
+	return supported_dirs
+
+
 def rec_param_holders(string):	
 	util_params = []
 	param_array = string.split("]]")
@@ -100,7 +102,7 @@ def get_map_input(prefix,param_name,step_config_full_file,mode):
 			raise argparse.ArgumentTypeError("%s is not provided and it is mandatory " % param_name)
 		#param_value = replace_string_params(param_value,rec_param_holders(param_value))
 		#os.environ[param_name] = param_value
-		logging.debug("[{}] : {}".format(param_name,param_value))
+		logging.debug("-{} : {}".format(param_name,param_value))
 		param_ret = {param_name:param_value}
 	elif re.search("^param", prefix):
 		param_value = os.environ.get(param_name)
@@ -109,11 +111,11 @@ def get_map_input(prefix,param_name,step_config_full_file,mode):
 		#param_value = replace_string_params(param_value,rec_param_holders(param_value))
 		#os.environ[param_name] = param_value
 		param_ret = {param_name:param_value}
-		logging.info("[{}] : {}".format(param_name,param_value))
+		logging.info("-{} : {}".format(param_name,param_value))
 	elif re.search("^util", prefix):
 		param_name = param_name.split(";")
 		logging.info("utility : {}".format(param_name))
-		param_ret = {"util":param_name}
+		param_ret = {"-util":param_name}
 	elif re.search("^activate_identifier", prefix):
 		logging.info("activate_identifier : {}".format(param_name))
 		param_ret = {prefix:param_name}
@@ -170,21 +172,6 @@ def read_step_input(step_config_full_file,loger,mode):
 		raise DbException("No input file found : {}".format(step_config_full_file))
 	
 	return input_map
-
-
-def read_db_components (step_config_dir):
-	return read_config_dirs(step_config_dir) 
-
-def read_db_mappings(step_config_dir):
-	return read_properties_file(step_config_dir + path_sep + "db_mappings.input","=")
-
-def read_error_handling(step_config_dir):
-	error_data = read_properties_file(step_config_dir + path_sep + "error_handling.input",":")
-	return ErrorHandle(error_data)
-
-def read_placeholders_config(component_name,step_config_dir):
-	return read_properties_file(step_config_dir + path_sep + component_name + ".plcholders","=")
-
 def read_properties_file(file_name,delimiter):
 	input_map = {}
 	if os.path.isfile(file_name):
@@ -201,6 +188,21 @@ def read_properties_file(file_name,delimiter):
 		raise DbException("No input file found : {}".format(file_name))
 			
 	return 	input_map
+
+def read_db_components (step_config_dir):
+	return read_config_dirs(step_config_dir) 
+
+def read_db_mappings(step_config_dir):
+	return read_properties_file(step_config_dir + path_sep + "db_mappings.input","=")
+
+def read_error_handling(step_config_dir):
+	error_data = read_properties_file(step_config_dir + path_sep + "error_handling.input",":")
+	return ErrorHandle(error_data)
+
+def read_placeholders_config(component_name,step_config_dir):
+	return read_properties_file(step_config_dir + path_sep + component_name + ".plcholders","=")
+
+
 
 def get_err_configs(file_name):
 	return read_properties_file(file_name,":")
