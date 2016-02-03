@@ -172,6 +172,7 @@ def read_step_input(step_config_full_file,loger,mode):
 		raise DbException("No input file found : {}".format(step_config_full_file))
 	
 	return input_map
+	
 def read_properties_file(file_name,delimiter):
 	input_map = {}
 	if os.path.isfile(file_name):
