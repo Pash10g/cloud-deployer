@@ -16,7 +16,7 @@ fi
 
 export INSTALLATION_LOG=/var/log/chef-server_install_$(date +"%m-%d-%Y--%T").log
 
-#https://aa1202storage.blob.core.windows.net/services/chef/chef-chef-server-core_12.0.5-1_amd64.deb
+
 CHEF_SERVER_DEB_URL=$1
 ADMIN_USER=$2
 PASSWORD=$3  
@@ -94,6 +94,8 @@ function main () {
 	log "Successfuly installed chef-server!"
 	echo " "
 	echo "Login into https://<public_ip> with the provided $ADMIN_USER credentials and download the knife.rb of the devopshz organization "
+	echo "Chef console admin user : admin"
+	echo "Password : mongodb123 "
 	echo "Please find the user pem : /tmp/$ADMIN_USER.pem, and organization validator pem : /tmp/${ADMIN_USER}-validator.pem "
 	echo "Place those inside your chefDK repo to start  working form more details : https://docs.chef.io/"
 }
