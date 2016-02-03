@@ -100,7 +100,7 @@ class DbComponent:
                        raise DbException("No parameter {} is set in environment but it is requested by the db_component utility {} ".format(param,self.utility))
                
                 run_util = config.replace_string_params(util,self.util_params)
-                logging.info("running  script : {} on database : {}  ".format(os.environ.get("SQL_FILE"),os.environ.get("DB_NAME")))
+                logging.info("running  script : {} on cloud : {}  ".format(os.environ.get("SQL_FILE"),os.environ.get("DB_NAME")))
                 logging.debug("running statement (password masked XXXX) : {}".format(run_util))
 		logpipe = LogPipe(logging.INFO)
 		#errpipe = LogPipe(logging.ERROR)
