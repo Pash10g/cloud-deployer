@@ -71,10 +71,10 @@ do
 		# Save data
 		fqdn=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')
 		echo "configsvr${i}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		echo "  replicaset : <configsvr_repl_name> " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		echo "  replicaset : <configsvr_repl_set_name> " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  config_server_port : <configsvr_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		echo "  machine: ${machine}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		echo "  FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		echo "  machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		echo "  ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		
 		# Deploy any juju specifics to the vm (open ports, etc.)	
 		juju deploy --repository=/root/.juju/charms local:trusty/deploy-node "configsvr${i}"  --to $machine_no 
@@ -87,10 +87,10 @@ do
 		echo "configsvr${i} component already exist re-bootstraping..."
 		fqdn=$(juju status --format tabular | grep "configsvr${i}/" | awk '{print $7}') 
 		echo "configsvr${i}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		echo "  replicaset : <configsvr_repl_name> " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		echo "  replicaset : <configsvr_repl_set_name> " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  config_server_port : <configsvr_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		echo "  FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		echo "  ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 	fi
 	#Bootstrap chef configuration with role configsvr on the VM
 	echo " Starting chef add node : 'role[configsvr]' on host : ${fqdn}"
@@ -110,7 +110,7 @@ do
 	        echo "mongos${i}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 	        echo "  mongos_port : <mongos_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 	        echo "  machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-	        echo "  FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+	        echo "  ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 	        # Deploy any juju specifics to the vm (open ports, etc.)
 		juju deploy --repository=/root/.juju/charms local:trusty/deploy-node "mongos${i}"  --to $machine_no 
 	
@@ -147,7 +147,7 @@ do
 		echo "  shard_replica_set_name : <shard_repl_set_name>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  shard_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		echo "  FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		echo "  ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		juju deploy --repository=/root/.juju/charms local:trusty/deploy-node "shard${i}"  --to $machine_no 
 	
 		echo "Exposing shard${i}"
@@ -160,7 +160,7 @@ do
 		echo "  shard_replica_set_name : <shard_repl_set_name>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  shard_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		echo "  machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		echo "  FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		echo "  ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 	fi
 	#Bootstrap chef configuration with role shard on the VM providing relevant configuration
 	echo " Starting chef add node : 'role[shard]' on host : ${fqdn}"	
@@ -179,7 +179,7 @@ do
 	 		echo "    shard_replica_set_name : <shard_repl_set_name>_shard${i}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 			echo "    shard_replicaset_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 			echo "    machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-			echo "    FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+			echo "    ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 			juju deploy --repository=/root/.juju/charms local:trusty/deploy-node  "shard${i}-replicaset${j}"  --to $machine_no 
 	
 			echo "Exposing  shard${i}-replicaset${j}"
@@ -192,7 +192,7 @@ do
 	 		echo "    shard_replica_set_name : <shard_repl_set_name>_shard${i}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 			echo "    shard_replicaset_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 			echo "    machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-			echo "    FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+			echo "    ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 		fi
 		#Bootstrap chef configuration with role replicaset on the VM providing relevant configuration
 		echo " Starting chef add node : 'role[replicaset]' on host : ${fqdn}"	
