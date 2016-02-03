@@ -47,11 +47,11 @@ The steps :
 
 
 The mode : 
-- x  - using a property file located under config/<vendor>/properties.conf
+- x  - using a property file located under config/\<vendor\>/properties.conf
    * each file has the default values and the Mandatory values that needs to be provided (mandatory are account oriented)
 - i - interactive mode where user input needed for all properties required
 
-Not specifiying mode means that you need to specify any needed input  via ENVIRONMENT VARAIBLES (see config/<vendor>/properties.conf for the list)
+Not specifiying mode means that you need to specify any needed input  via ENVIRONMENT VARAIBLES (see config/\<vendor\>/properties.conf for the list)
 
 # Quick Start
  On your ubuntu host git clone the project .
