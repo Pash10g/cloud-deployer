@@ -125,7 +125,7 @@ do
 		echo "mongos${i}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 	        echo "  mongos_port : <mongos_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 	        echo "  machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-	        echo "  FQDN: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+	        echo "  ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 	fi
 	#Bootstrap chef configuration with role mongos on the VM
 	echo " Starting chef add node : 'role[mongos]' on host : ${fqdn}"
