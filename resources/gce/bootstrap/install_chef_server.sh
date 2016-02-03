@@ -16,7 +16,6 @@ fi
 
 export INSTALLATION_LOG=/var/log/chef-server_install_$(date +"%m-%d-%Y--%T").log
 
-#https://aa1202storage.blob.core.windows.net/services/chef/chef-chef-server-core_12.0.5-1_amd64.deb
 CHEF_SERVER_DEB_URL=$1
 ADMIN_USER=$2
 PASSWORD=$3  
