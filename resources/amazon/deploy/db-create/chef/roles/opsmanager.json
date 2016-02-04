@@ -31,7 +31,7 @@
             }
           }
         },
-		"mms_server" {
+		"mms_server" : {
 			"version" : "<ops_manager_version>" 
 		}
       }
