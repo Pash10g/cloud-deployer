@@ -40,7 +40,7 @@ juju run "sudo /tmp/install_chef_server.sh https://web-dl.packagecloud.io/chef/s
 echo "Expose needed ports for chef server $bootstrap_node..."
 juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node $node_name  --to $machine_no 
 
-juju expose chef-server
+juju expose $node_name
 
 sleep 50s
 
