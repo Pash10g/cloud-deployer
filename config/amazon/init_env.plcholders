@@ -30,4 +30,5 @@
 <secret_key>=SECRET_KEY
 <region>=REGION
 <mms_manager_type>=MMS_MANAGER_TYPE
-<mms_manager_version>=MMS_MANAGER_VERSION
+<ops_manager_version>=MMS_MANAGER_VERSION
+<dist_version>=DIST_VERSION
