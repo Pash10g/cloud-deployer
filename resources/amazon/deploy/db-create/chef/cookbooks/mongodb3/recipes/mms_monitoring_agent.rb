@@ -26,17 +26,17 @@ end
   download_url = "https://cloud.mongodb.com"
   mms_server =  search(:node, %Q{role:opsmanager})
   mms_server.each do |cnode|
-    node.override['mongodb3']['config']['mms']['mmsServerUrl'] = "https://#{cnode['ipaddress']}:8080"
-    download_url = "https://#{cnode['ipaddress']}:8080"
+    node.override['mongodb3']['config']['mms']['mmsServerUrl'] = "http://#{cnode['ipaddress']}:8080"
+    download_url = "http://#{cnode['ipaddress']}:8080"
   end
 
 
 case node['platform_family']
   when 'rhel', 'fedora'
-    mms_agent_source = "https://#{download_url}/download/agent/monitoring/mongodb-mms-monitoring-agent-latest.x86_64.rpm"
+    mms_agent_source = "http://#{download_url}/download/agent/monitoring/mongodb-mms-monitoring-agent-latest.x86_64.rpm"
     mms_agent_file = '/root/mongodb-mms-monitoring-agent-latest.x86_64.rpm'
   when 'debian'
-    mms_agent_source = "https://#{download_url}/download/agent/monitoring/mongodb-mms-monitoring-agent_latest_amd64.deb"
+    mms_agent_source = "http://#{download_url}/download/agent/monitoring/mongodb-mms-monitoring-agent_latest_amd64.deb"
     mms_agent_file = '/root/mongodb-mms-monitoring-agent_latest_amd64.deb'
 end
 
