@@ -7,7 +7,7 @@ export BASE_DIR=`dirname $FULLPATH_SCRIPT`
 
 juju switch "<env_name>"  || { echo "ERROR While setting env <env_name> "; exit 2; }
 if [ "<mms_manager_type>" = "ops" ]; then
-	juju bootstrap -v  --constraints  "cpu-cores=2 cpu-power=0  mem=4G " || { echo "ERROR While bootstraping juju env <env_name> "; exit 2; }
+	juju bootstrap -v  --constraints  "cpu-cores=2 cpu-power=0  mem=8G " || { echo "ERROR While bootstraping juju env <env_name> "; exit 2; }
 	node_name="chef-server-ops-manager"
 else
 	juju bootstrap -v  --constraints  "cpu-cores=1 cpu-power=0  mem=2G " || { echo "ERROR While bootstraping juju env <env_name> "; exit 2; }
