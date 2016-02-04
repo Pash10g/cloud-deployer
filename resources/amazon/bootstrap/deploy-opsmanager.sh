@@ -1,3 +1,10 @@
+#!/bin/bash
+
+set -e
+
+FULLPATH_SCRIPT=`readlink -f "$0"`
+export BASE_DIR=`dirname $FULLPATH_SCRIPT`
+
 
 if [ "<mms_manager_type>" = "ops" ]; then
 	
