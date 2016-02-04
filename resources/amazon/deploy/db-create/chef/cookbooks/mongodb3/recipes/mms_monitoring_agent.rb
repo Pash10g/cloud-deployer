@@ -52,6 +52,11 @@ case node['platform_family']
     end
 end
 
+  mms_server =  search(:node, %Q{role:opsmanager})
+  mms_server.each do |cnode|
+    node.override['mongodb3']['config']['mms']['mmsServerUrl'] = "https://#{cnode['ipaddress']}:8080"
+  end
+
 # Create or modify the mms agent config file
 template '/etc/mongodb-mms/monitoring-agent.config' do
   source 'monitoring-agent.config.erb'
