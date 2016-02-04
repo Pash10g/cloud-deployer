@@ -29,3 +29,5 @@
 <access_key>=ACCESS_KEY
 <secret_key>=SECRET_KEY
 <region>=REGION
+<mms_manager_type>=MMS_MANAGER_TYPE
+<mms_manager_version>=MMS_MANAGER_VERSION

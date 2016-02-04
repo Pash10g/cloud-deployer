@@ -1,0 +1,49 @@
+{
+  "name": "opsmanager",
+  "description": "Role for Ops Manager",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+    "mongodb3" : {
+      "package" : {
+		"version" : "<mongo_version>"
+	  },
+      "config" : {
+        "mongod" : {
+		  "net" : {
+		    "port" : <shard_port>
+		  },
+	      "storage" : {
+            "dbPath" : "/var/lib/mongodb/wiredTiger",
+            "engine" : "wiredTiger",
+            "wiredTiger" : {
+              "engineConfig" : {
+                "cacheSizeGB" : 1,
+                "statisticsLogDelaySecs" : 60,
+                "journalCompressor" : "snappy",
+                "directoryForIndexes" : false
+              },
+              "collectionConfig" : {
+                "blockCompressor" : "snappy"
+              },
+              "indexConfig" : {
+                "prefixCompression" : true
+              }
+            }
+          }
+        },
+		"mms_server" {
+			"version" : "<mms_manager_version>" 
+		}
+      }
+    }
+  },
+  "override_attributes": {
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[chef-client::default]",
+    "recipe[mongodb3::mms_monitoring_server]"
+  ],
+  "env_run_lists": {
+  }
+}
