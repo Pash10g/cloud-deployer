@@ -10,7 +10,10 @@ if [ "<mms_manager_type>" = "ops" ]; then
 	
 	# Set chef org
 	export CHEF_ORGNAME="juju-deploy"
+        machine_no=0
 
+
+	bootstarp_node="$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $4}')"
 	# Upload chef code to the chef server
 	echo "chef ssl check"
 	knife ssl fetch || { echo "ERROR While chef ssl fetch "; exit 2; }
