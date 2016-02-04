@@ -25,13 +25,11 @@ if [ "<mms_manager_type>" = "ops" ]; then
 	knife upload roles ||  { echo "ERROR While chef upload roles"; exit 2; }
 	cd $back_dir
 	
-	echo "Expose needed ports for chef server $bootstrap_node..."
-	juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node ops-manager  --to $machine_no 
-	
 	#Bootstrap chef configuration with role configsvr on the VM
 	echo " Starting chef add node : 'role[opsmanager]' on host : ${bootstarp_node}"
-	knife bootstrap  ${bootstarp_node} -i /root/.juju/ssh/juju_id_rsa --ssh-user ubuntu --sudo -r 'role[opsmanager]' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine} role[configsvr]  "; exit 2; }
+	knife bootstrap  ${bootstarp_node} -i /root/.juju/ssh/juju_id_rsa --ssh-user ubuntu --sudo -r 'role[opsmanager]' --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${bootstrap_node} role[opsmanager]  "; exit 2; }
 	echo " Successfully finished chef install 'role[opsmanager]' on host : ${bootstarp_node}"
-	
+else
+	echo "Ops manager deployment skipped using <mms_manager_type> insted..."
 	
 fi 
