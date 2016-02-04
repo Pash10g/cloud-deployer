@@ -242,6 +242,6 @@ default['mongodb3']['config']['mms']['maxLogFiles'] = 10
 default['mongodb3']['config']['mms']['maxLogFileSize'] = 268435456
 default['mongodb3']['config']['mms']['httpProxy'] = nil
 
-default['mongodb3']['config']['mms_server']['mongodb_host'] = "localhost"
+default['mongodb3']['config']['mms_server']['mongodb_server'] = "localhost"
 default['mongodb3']['config']['mms_server']['mongodb_port'] = node['mongodb3']['config']['mongod']['net']['port'] 
 default['mongodb3']['config']['mms_server']['version'] = "2.0.1.332-1"
