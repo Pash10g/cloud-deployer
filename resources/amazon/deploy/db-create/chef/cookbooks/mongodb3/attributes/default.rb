@@ -237,6 +237,7 @@ default['mongodb3']['config']['mongos']['sharding']['chunkSize'] = 64 # default 
 # MMS automation agent config attribute
 default['mongodb3']['config']['mms']['mmsGroupId'] = "<mms_group_id>"
 default['mongodb3']['config']['mms']['mmsApiKey'] = "<mms_api_key>"
+default['mongodb3']['config']['mms']['mmsServerUrl'] = "https://api-agents.mongodb.com"
 default['mongodb3']['config']['mms']['logLevel'] = 'INFO'
 default['mongodb3']['config']['mms']['maxLogFiles'] = 10
 default['mongodb3']['config']['mms']['maxLogFileSize'] = 268435456
