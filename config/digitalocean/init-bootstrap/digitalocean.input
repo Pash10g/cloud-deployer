@@ -28,3 +28,4 @@ pass:SYSTEM_PASSWORD
 param:MONGO_VERSION
 pass:AC_KEY
 activate_identifier:CLUSTER_NAME
+param:DIST_VERSION

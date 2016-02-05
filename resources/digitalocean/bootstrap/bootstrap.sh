@@ -7,7 +7,14 @@ export BASE_DIR=`dirname $FULLPATH_SCRIPT`
 
 juju switch "<env_name>"  || { echo "ERROR While setting env <env_name> "; exit 2; }
 
-juju docean bootstrap -v  --constraints="mem=2G " || { echo "ERROR While bootstraping juju env <env_name> \n Warning! If bootstrap fails on the ssh key please verify you have upladed the : /root/.ssh/id_rsa.pub to digital ocean console and verified that you provided the correct SSH_KEY_NAME parameter"; exit 2; }
+if [ "<mms_manager_type>" = "ops" ]; then
+	juju docean bootstrap -v  --constraints="mem=8G" || { echo "ERROR While bootstraping juju env <env_name> "; exit 2; }
+	node_name="chef-server-ops-manager"
+else
+	juju docean bootstrap -v  --constraints="mem=2G" || { echo "ERROR While bootstraping juju env <env_name> "; exit 2; }
+	node_name="chef-server"
+fi
+
 
 machine_no="0"
 echo "Waiting for machine to start... (current : pending)"
@@ -33,9 +40,9 @@ echo "Running install script for chef server on $bootstarp_node ... Can take up 
 juju run "sudo /tmp/install_chef_server.sh https://web-dl.packagecloud.io/chef/stable/packages/ubuntu/trusty/chef-server-core_12.3.1-1_amd64.deb admin mongodb123  2>&1" --machine ${machine_no} --timeout "20m0s" || { echo "ERROR Bottstraping chef server install for <env_name> env "; exit 2; }
 
 echo "Expose needed ports for chef server $bootstrap_node..."
-juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node chef-server --to $machine_no 
+juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node $node_name --to $machine_no 
 
-juju expose chef-server
+juju expose $node_name 
 
 sleep 50s
 

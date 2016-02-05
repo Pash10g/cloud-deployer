@@ -29,3 +29,6 @@
 <auth_file>=AUTH_FILE
 <region>=REGION
 <project_id>=PROJECT_ID
+<mms_manager_type>=MMS_MANAGER_TYPE
+<ops_manager_version>=MMS_MANAGER_VERSION
+<dist_version>=DIST_VERSION

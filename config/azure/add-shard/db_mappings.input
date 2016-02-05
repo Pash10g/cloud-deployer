@@ -1,3 +1,0 @@
-deploy=ENV_NAME
-relate=ENV_NAME
-expose=ENV_NAME

@@ -30,3 +30,6 @@
 <storage_account_name>=STORAGE_ACCOUNT_NAME
 <subscription_id>=SUBSCRIPTION_ID
 <region>=REGION
+<mms_manager_type>=MMS_MANAGER_TYPE
+<ops_manager_version>=MMS_MANAGER_VERSION
+<dist_version>=DIST_VERSION

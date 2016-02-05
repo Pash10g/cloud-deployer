@@ -4,7 +4,5 @@ set -e
 
 open-port 80
 open-port 443
+open-port 8080
 open-port <shard_port>
-open-port <mongos_port>
-open-port <configsvr_port>
-open-port 27021

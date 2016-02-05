@@ -1,6 +1,0 @@
-<cluster_name>=CLUSTER_NAME 
-<env_name>=ENV_NAME
-<system_name>=SYSTEM_NAME
-<system_password>=SYSTEM_PASSWORD
-<mongo_version>=MONGO_VERSION
-<mongos_number>=MONGOS_NUMBER

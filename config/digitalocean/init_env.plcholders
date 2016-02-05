@@ -28,3 +28,6 @@
 <mongo_version>=MONGO_VERSION
 <ac_key>=AC_KEY
 <ssh_key_name>=SSH_KEY_NAME
+<mms_manager_type>=MMS_MANAGER_TYPE
+<ops_manager_version>=MMS_MANAGER_VERSION
+<dist_version>=DIST_VERSION

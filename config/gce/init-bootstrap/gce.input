@@ -7,4 +7,5 @@ param:ENV_NAME
 param:MONGOS_PORT
 param:SHARD_PORT
 param:CONFIGSVR_PORT
+param:DIST_VERSION
 activate_identifier:CLUSTER_NAME
