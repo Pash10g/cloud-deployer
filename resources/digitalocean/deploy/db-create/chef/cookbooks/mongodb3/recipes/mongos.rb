@@ -133,6 +133,8 @@ shard_nodes.each do |cnode|
 		command "mongo --host localhost:#{node['mongodb3']['config']['mongos']['net']['port']} <<EOF
 		sh.addShard(\"#{prefix}#{cnode["ipaddress"]}:#{cnode['mongodb3']['config']['mongod']['net']['port']}\")
 		EOF>>"
+		retries 5
+		retry_delay 10
         user node['mongodb3']['user']
         not_if "echo 'sh.status()' | mongo --host localhost:#{node['mongodb3']['config']['mongos']['net']['port']} --quiet | grep #{cnode["ipaddress"]}" 
    end

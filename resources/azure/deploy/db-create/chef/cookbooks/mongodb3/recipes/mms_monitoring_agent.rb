@@ -33,10 +33,10 @@ end
 
 case node['platform_family']
   when 'rhel', 'fedora'
-    mms_agent_source = "http://#{download_url}/download/agent/monitoring/mongodb-mms-monitoring-agent-latest.x86_64.rpm"
+    mms_agent_source = "#{download_url}/download/agent/monitoring/mongodb-mms-monitoring-agent-latest.x86_64.rpm"
     mms_agent_file = '/root/mongodb-mms-monitoring-agent-latest.x86_64.rpm'
   when 'debian'
-    mms_agent_source = "http://#{download_url}/download/agent/monitoring/mongodb-mms-monitoring-agent_latest_amd64.deb"
+    mms_agent_source = "#{download_url}/download/agent/monitoring/mongodb-mms-monitoring-agent_latest_amd64.deb"
     mms_agent_file = '/root/mongodb-mms-monitoring-agent_latest_amd64.deb'
 end
 
