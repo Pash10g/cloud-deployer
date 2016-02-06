@@ -30,3 +30,5 @@
 <dist_version>=DIST_VERSION
 <mms_api_key>=MMS_API_KEY
 <mms_group_id>=MMS_GROUP_ID
+<mms_manager_type>=MMS_MANAGER_TYPE
+<ops_manager_version>=MMS_MANAGER_VERSION
