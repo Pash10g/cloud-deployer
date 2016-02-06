@@ -26,6 +26,8 @@ param:CONFIGSVR_PORT
 param:SYSTEM_NAME
 pass:SYSTEM_PASSWORD
 param:MONGO_VERSION
+param:MONGO_DIST
+param:DIST_VERSION
 pass:MMS_API_KEY
 param:MMS_GROUP_ID
 activate_identifier:CLUSTER_NAME
