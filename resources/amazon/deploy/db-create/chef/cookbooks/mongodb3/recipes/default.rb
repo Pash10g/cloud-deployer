@@ -80,8 +80,8 @@ end
 service 'mongod' do
   supports :start => true, :stop => true, :restart => true, :status => true
   action [:enable,:start]
-  subscribes :restart, "template[#{node['mongodb3']['mongod']['config_file']}]", :delayed
-  subscribes :restart, "template[#{node['mongodb3']['config']['mongod']['security']['keyFile']}", :delayed
+  subscribes :restart, "template[#{node['mongodb3']['mongod']['config_file']}]", :immediate
+  subscribes :restart, "template[#{node['mongodb3']['config']['mongod']['security']['keyFile']}", :immediate
 end
 
 sleep(60)
