@@ -8,4 +8,5 @@ param:MONGOS_PORT
 param:SHARD_PORT
 param:CONFIGSVR_PORT
 param:DIST_VERSION
+param:MONGO_DIST
 activate_identifier:CLUSTER_NAME
