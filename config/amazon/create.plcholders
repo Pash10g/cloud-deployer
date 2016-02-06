@@ -29,4 +29,5 @@
 <system_password>=SYSTEM_PASSWORD
 <mongo_version>=MONGO_VERSION
 <dist_version>=DIST_VERSION
+<mongo_dist>=MONGO_DIST
 <mms_group_id>=MMS_GROUP_ID
