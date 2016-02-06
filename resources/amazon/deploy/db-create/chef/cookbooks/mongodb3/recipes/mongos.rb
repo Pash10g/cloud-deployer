@@ -113,7 +113,7 @@ end
 service 'mongos-service' do
   supports :start => true, :stop => true, :restart => true, :status => true
   action [:enable,:start]
-  subscribes :restart, "template[#{node['mongodb3']['mongos']['config_file']}]", :delayed
+  subscribes :restart, "template[#{node['mongodb3']['mongos']['config_file']}]", :immediate
 end
 
 shard_nodes =  search(:node, "role:shard")
