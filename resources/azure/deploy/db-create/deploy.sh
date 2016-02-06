@@ -93,81 +93,6 @@ cd $back_dir
 # Set output yaml to none
 echo "" > /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 
-# Loop to provision all shards and replicas
-for ((i=1; i <= <shard_number>; i++)) 
-do
-	echo "shard${i}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-
-	echo " Starting deploy of shard${i}"
-	# Check if current shard component is already provisioned
-	if [ ! $(juju status --format tabular | grep "shard${i}/" | awk '{print $7}') ]; then
-		# Deploy shard VM
-		deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core> root-disk=<shard_data_disk>" machine_no
-		machine_shard=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $5}')
-		fqdn=$(juju status --format tabular | grep ${machine_shard} | awk '{print $4}')
-		echo "  shard_replica_set_name : <shard_repl_set_name>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		echo "  shard_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		echo "  machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		echo "  ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		add_log_data "<shard_data_disk>" "<shard_journal_disk>" disk_size 
-		echo "Setting up machine : ${fqdn} with /srv/data disk size of : $disk_size "
-		juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node  "shard${i}" --storage data="${disk_size}" --to $machine_no 
-	
-		echo "Exposing shard${i}"
-		juju expose "shard${i}"
-		sleep 30s
-	else
-		echo "shard${i} component already exist re-bootstraping..."
-		fqdn=$(juju status --format tabular | grep "shard${i}/" | awk '{print $7}')  
-		echo "  shard_replica_set_name : <shard_repl_set_name>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		echo "  shard_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		echo "  machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		echo "  ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-	fi
-	#Bootstrap chef configuration with role shard on the VM providing relevant configuration
-	echo " Starting chef add node : 'role[shard]' on host : ${fqdn}"	
-        knife bootstrap  ${fqdn} -i /root/.juju/ssh/juju_id_rsa --ssh-user ubuntu --sudo -r 'role[shard]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_shard${i}\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_shard} role[shard]  "; exit 2; }
-	echo " Successfully finished chef install 'role[shard]'  on host : ${fqdn}"
-	
-		for ((j=1; j <= <shard_repl_number>; j++))
-	do
-		echo " Starting deploy of shard${i}-replicaset${j}"
-		# Check if current replicaset component is already provisioned
-		if [ ! $(juju status --format tabular | grep "shard${i}-replicaset${j}/" | awk '{print $7}') ]; then
-			# Deploy replicaset VM
-			deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core> root-disk=<shard_data_disk>" machine_no
-			machine_repl=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $5}')
-			fqdn=$(juju status --format tabular | grep ${machine_repl} | awk '{print $4}')
-			echo "  shard-replicaset${j}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-	 		echo "    shard_replica_set_name : <shard_repl_set_name>_shard${i}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-			echo "    shard_replicaset_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-			echo "    machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-			echo "    ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-			add_log_data "<shard_data_disk>" "<shard_journal_disk>" disk_size 
-			echo "Setting up machine : ${fqdn} with /srv/data disk size of : $disk_size "
-			juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node  "shard${i}-replicaset${j}" --storage data="${disk_size}" --to $machine_no 
-	
-			echo "Exposing  shard${i}-replicaset${j}"
-			juju expose "shard${i}-replicaset${j}"
-			sleep 30s
-		else
-			echo "shard${i}-replicaset${j} component already exist re-bootstraping..."
-			fqdn=$(juju status --format tabular | grep "shard${i}-replicaset${j}/" | awk '{print $7}') 
-			echo "  shard-replicaset${j}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-	 		echo "    shard_replica_set_name : <shard_repl_set_name>_shard${i}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-			echo "    shard_replicaset_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-			echo "    machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-			echo "    ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
-		fi
-		#Bootstrap chef configuration with role replicaset on the VM providing relevant configuration
-		echo " Starting chef add node : 'role[replicaset]' on host : ${fqdn}"	
-		knife bootstrap  ${fqdn} -i /root/.juju/ssh/juju_id_rsa --ssh-user ubuntu --sudo -r 'role[replicaset]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_shard${i}\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${fqdn} role[replicaset]  "; exit 2; }
-
-		echo " Successfully finished chef install 'role[replicaset]'  on host : ${fqdn}"
-	done
-
-done
-
 
 # Loop to provision all configsvr vm's
 for ((i=1; i <= <configsvr_number>; i++)) 
@@ -247,7 +172,80 @@ do
 	echo " Successfully finished chef install 'role[mongos]' on host : ${fqdn}"
 done
 
+# Loop to provision all shards and replicas
+for ((i=1; i <= <shard_number>; i++)) 
+do
+	echo "shard${i}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
 
+	echo " Starting deploy of shard${i}"
+	# Check if current shard component is already provisioned
+	if [ ! $(juju status --format tabular | grep "shard${i}/" | awk '{print $7}') ]; then
+		# Deploy shard VM
+		deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core> root-disk=<shard_data_disk>" machine_no
+		machine_shard=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $5}')
+		fqdn=$(juju status --format tabular | grep ${machine_shard} | awk '{print $4}')
+		echo "  shard_replica_set_name : <shard_repl_set_name>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		echo "  shard_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		echo "  machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		echo "  ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		add_log_data "<shard_data_disk>" "<shard_journal_disk>" disk_size 
+		echo "Setting up machine : ${fqdn} with /srv/data disk size of : $disk_size "
+		juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node  "shard${i}" --storage data="${disk_size}" --to $machine_no 
+	
+		echo "Exposing shard${i}"
+		juju expose "shard${i}"
+		sleep 30s
+	else
+		echo "shard${i} component already exist re-bootstraping..."
+		fqdn=$(juju status --format tabular | grep "shard${i}/" | awk '{print $7}')  
+		echo "  shard_replica_set_name : <shard_repl_set_name>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		echo "  shard_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		echo "  machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		echo "  ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+	fi
+	#Bootstrap chef configuration with role shard on the VM providing relevant configuration
+	echo " Starting chef add node : 'role[shard]' on host : ${fqdn}"	
+        knife bootstrap  ${fqdn} -i /root/.juju/ssh/juju_id_rsa --ssh-user ubuntu --sudo -r 'role[shard]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_shard${i}\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${machine_shard} role[shard]  "; exit 2; }
+	echo " Successfully finished chef install 'role[shard]'  on host : ${fqdn}"
+	
+		for ((j=1; j <= <shard_repl_number>; j++))
+	do
+		echo " Starting deploy of shard${i}-replicaset${j}"
+		# Check if current replicaset component is already provisioned
+		if [ ! $(juju status --format tabular | grep "shard${i}-replicaset${j}/" | awk '{print $7}') ]; then
+			# Deploy replicaset VM
+			deploy_vm "mem=<shard_mem_mb> cpu-cores=<shard_cpu_core> root-disk=<shard_data_disk>" machine_no
+			machine_repl=$(juju status --format tabular | grep "^${machine_no} .*" | awk '{print $5}')
+			fqdn=$(juju status --format tabular | grep ${machine_repl} | awk '{print $4}')
+			echo "  shard-replicaset${j}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+	 		echo "    shard_replica_set_name : <shard_repl_set_name>_shard${i}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+			echo "    shard_replicaset_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+			echo "    machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+			echo "    ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+			add_log_data "<shard_data_disk>" "<shard_journal_disk>" disk_size 
+			echo "Setting up machine : ${fqdn} with /srv/data disk size of : $disk_size "
+			juju deploy --repository=/root/.juju/charms/ local:trusty/deploy-node  "shard${i}-replicaset${j}" --storage data="${disk_size}" --to $machine_no 
+	
+			echo "Exposing  shard${i}-replicaset${j}"
+			juju expose "shard${i}-replicaset${j}"
+			sleep 30s
+		else
+			echo "shard${i}-replicaset${j} component already exist re-bootstraping..."
+			fqdn=$(juju status --format tabular | grep "shard${i}-replicaset${j}/" | awk '{print $7}') 
+			echo "  shard-replicaset${j}: " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+	 		echo "    shard_replica_set_name : <shard_repl_set_name>_shard${i}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+			echo "    shard_replicaset_port : <shard_port>" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+			echo "    machine: machine-${machine_no}" >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+			echo "    ip address: ${fqdn} " >> /tmp/<cluster_name>-<env_name>-mongo-conf.yaml
+		fi
+		#Bootstrap chef configuration with role replicaset on the VM providing relevant configuration
+		echo " Starting chef add node : 'role[replicaset]' on host : ${fqdn}"	
+		knife bootstrap  ${fqdn} -i /root/.juju/ssh/juju_id_rsa --ssh-user ubuntu --sudo -r 'role[replicaset]' -j "{ \"mongodb3\" : { \"config\" : { \"mongod\" : {  \"replication\" : {  \"replSetName\" : \"<shard_repl_set_name>_shard${i}\" } } } } }" --bootstrap-install-command 'curl -L https://www.chef.io/chef/install.sh | sudo bash' || { echo "Failed to bootstrap machine : ${fqdn} role[replicaset]  "; exit 2; }
+
+		echo " Successfully finished chef install 'role[replicaset]'  on host : ${fqdn}"
+	done
+
+done
 
 
 
