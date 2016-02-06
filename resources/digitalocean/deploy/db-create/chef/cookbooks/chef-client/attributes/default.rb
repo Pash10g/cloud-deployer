@@ -36,7 +36,7 @@ end
 
 # log_file has no effect when using runit
 default['chef_client']['log_file']    = 'client.log'
-default['chef_client']['interval']    = '600'
+default['chef_client']['interval']    = '300'
 default['chef_client']['splay']       = '300'
 default['chef_client']['conf_dir']    = '/etc/chef'
 default['chef_client']['bin']         = '/usr/bin/chef-client'

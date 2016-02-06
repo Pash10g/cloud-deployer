@@ -37,7 +37,11 @@ case node['platform']
   when 'amazon'
     pkg_repo = 'https://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/3.0/x86_64/'
   when 'ubuntu'
-    pkg_repo = 'http://repo.mongodb.org/apt/ubuntu'
+    if '<mongo_dist>' == 'enterprise'
+      pkg_repo = 'http://repo.mongodb.com/apt/ubuntu'
+    else
+      pkg_repo = 'http://repo.mongodb.org/apt/ubuntu'
+    end
   when 'debian'
     pkg_repo = 'http://repo.mongodb.org/apt/debian'
 end

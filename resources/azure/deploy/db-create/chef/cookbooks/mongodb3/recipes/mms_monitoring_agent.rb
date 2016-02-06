@@ -79,4 +79,5 @@ service 'mongodb-mms-monitoring-agent' do
   provider Chef::Provider::Service::Upstart if node['platform_family'] == 'debian'
   supports :status => true, :restart => true, :stop => true
   action [ :enable, :start ]
+  subscribes :restart, "template[/etc/mongodb-mms/monitoring-agent.config]", :immediate
 end
