@@ -32,3 +32,4 @@
 <mms_manager_type>=MMS_MANAGER_TYPE
 <ops_manager_version>=MMS_MANAGER_VERSION
 <dist_version>=DIST_VERSION
+<mongo_dist>=MONGO_DIST
