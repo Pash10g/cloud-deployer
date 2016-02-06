@@ -20,7 +20,7 @@
 include_recipe 'mongodb3::package_repo'
 
 # Install MongoDB package
-install_package = %w(mongodb-org-server mongodb-org-shell mongodb-org-tools)
+install_package = %w(mongodb-<mongo_dist>-server mongodb-<mongo_dist>-shell mongodb-<mongo_dist>-tools)
 
 install_package.each do |pkg|
   package pkg do
