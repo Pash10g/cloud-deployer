@@ -201,10 +201,8 @@ class DbComponent:
 						# Populate the current dir inside the SCRIPT_DIR env.
                         if os.path.isdir(current_script):
                             os.environ["SCRIPT_DIR"] = current_script
-                            os.environ["CRE_KIT_PATH"] = current_script
                         elif   os.path.isfile(current_script):
                             os.environ["SCRIPT_DIR"] = os.path.dirname(current_script)
-                            os.environ["CRE_KIT_PATH"] = os.path.dirname(current_script)
                         replaced_value = os.environ.get(value)
 
                         if not replaced_value:
