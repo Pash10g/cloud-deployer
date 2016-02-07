@@ -93,7 +93,7 @@ class Step:
                        
     def cleanup(self,base_dir):
         
-        if os.path.isfile(base_dir) and re.search(".*[cs]ql$",base_dir):
+        if os.path.isfile(base_dir) and re.search(".*\.sh$",base_dir):
             logging.debug("Removing file {} ".format(base_dir))
             os.remove(base_dir)
         else:           
