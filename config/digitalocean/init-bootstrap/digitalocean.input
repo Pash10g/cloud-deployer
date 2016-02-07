@@ -1,6 +1,7 @@
 util: bash [[SQL_FILE]] | tee [[LOG_FILE]] 2>&1  
 param:CLUSTER_NAME 
 param:ENV_NAME 
+param:REGION
 param:CONFIGSVR_REPL_SET_NAME
 param:CONFIGSVR_REPL_SET_NUMBER
 param:CONFIGSVR_NUMBER
@@ -29,3 +30,4 @@ param:MONGO_VERSION
 pass:AC_KEY
 activate_identifier:CLUSTER_NAME
 param:DIST_VERSION
+param:MONGO_DIST

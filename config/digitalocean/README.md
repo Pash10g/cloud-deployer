@@ -1,14 +1,15 @@
 # properties.conf file
 
-# Mandatory Values
+# Mandatory values
 
-- ACCESS_KEY - AWS Access key obtained for "Security Credentials" tab
-- SECRET_KEY - AWS Secret key obtained for "Security Credentials" tab
+- AC_KEY - The OAUTH key retrieved from www.digitalocean.com API section
+- SSH_KEY_NAME - Public SSH Key name that was created when uploaded to digital ocean console , the uploaded key must be taken from : /root/.juju/ssh/juju_id_rsa.pub 
 
-# Default Values
-- REGION=us-east-1 - AWS Region 
+# Default values
+
+- REGION=nyc3 - Digital Ocean region short name
 - CLUSTER_NAME=test - Cluster identifier for deployment (currently only 1 per env)
-- ENV_NAME=amazon - Juju env name to be managed , used when init-bootstrap , deploy, deploy-standalone , destroy-env
+- ENV_NAME=azure - Juju env name to be managed , used when init-bootstrap , deploy, deploy-standalone , destroy-env
 - DIST_VERSION=3.2 - Mongo distrebution major version (3.0 , 3.1, 3.2)
 - MONGO_VERSION=3.2.0 - MongoDB version , must be aligned with the "DIST_VERSION" of course
 - \# values : org or enterprise
@@ -43,5 +44,5 @@
      * ops : will deploy ops manager during init-bootstrap phase on the management server (chef-server-ops-manager).
 - \# Relevant only if MMS_MANAGER_TYPE is ops
 - MMS_MANAGER_VERSION=2.0.1.332-1 - MMS servet version if ops type is usef
-- MMS_API_KEY=none - MMS api key retrived from MMS cloud or ops manager
+- MMS_API_KEY=none - MMS api key retrived from MMS cloud or ops manager, if none is specified no MMS agent will be installed
 - MMS_GROUP_ID=none - MMS group id retrieved from MMS cloud or ops manager
