@@ -139,11 +139,11 @@ class Step:
         finally:
             if re.search("activate",self.step_name):
                 if  logging.getLogger().getEffectiveLevel() != logging.DEBUG: 
-                    logging.info("Cleaning up files [cql|sql] from directory : {}".format(self.activation_dir))
+                    logging.info("Cleaning up files [sh] from directory : {}".format(self.activation_dir))
                     self.cleanup(self.activation_dir)  
             else:
                 if  logging.getLogger().getEffectiveLevel() != logging.DEBUG:
-                    logging.info("Cleaning up files [cql|sql] from directory : {}".format(self.run_dir))   
+                    logging.info("Cleaning up files [sh] from directory : {}".format(self.run_dir))   
                     self.cleanup(self.run_dir)
         
         
