@@ -16,7 +16,7 @@ The main directory has a main run file called : run_deployer.py.
 The cloud is one of the supported clouds :
 - amazon - AWS (see : https://jujucharms.com/docs/stable/config-aws for input configuration)
   * Mandatory params which should be set in config/amazon/properties.conf are :
-  - ACCES_KEY (your aws access key)
+  - ACCESS_KEY (your aws access key)
   - SECRET_KEY (your aws secret key)
 - gce - Google Cloud (see : https://jujucharms.com/docs/stable/config-gce for input configuration)
   * Mandatory params which should be set in config/gce/properties.conf are :
