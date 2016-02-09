@@ -112,7 +112,7 @@ class Step:
 					logging.info("run file: {}".format(script_path))
 	
     def read_input_data(self): 
-        self.input_data = config.read_step_input(self.input_file,self.logger,self.mode)
+        self.input_data = config.read_step_input(self.input_file,self.logger,self.mode,self.get_config_dir() + path_sep +"properties.conf")
         #return self.input_data
     
     def intialize_db_components(self):

@@ -151,20 +151,23 @@ def get_map_input(prefix,param_name,step_config_full_file,mode):
 		
 	return param_ret 
 
-def read_step_input(step_config_full_file,loger,mode):
+def read_step_input(step_config_full_file,loger,mode,default_properties):
 	input_map = {}
 	if os.path.isfile(step_config_full_file):
 		step_input = [line.strip() for line in open(step_config_full_file,'r')]
+		if mode == "i":
+			populate_prop_values(default_properties)
+
 		for input_line in step_input:
 			input_line = input_line.split(":")
 			prefix = input_line[0]
 			param_name = input_line[1]
 			if mode == "i":
 				if  prefix in ["pass","param"]:
-					value = raw_input("Insert value for [" + param_name  + "] : ") 
-					#os.environ.putenv(param_name, value)
-					os.environ[param_name] = value
-					
+					value = raw_input("Insert value for - " + param_name  + " [" + str(os.environ.get(param_name)) + "] : ") 
+					if value != "":
+						os.environ[param_name] = value
+			#logging.info("Using value : {}".format(os.environ.get(param_name)))		
 			input_map.update(get_map_input(prefix,param_name,step_config_full_file,mode))
 			##loger.info("{}".format(input_line))S
 	else:
