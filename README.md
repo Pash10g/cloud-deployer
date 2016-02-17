@@ -58,6 +58,7 @@ Not specifiying mode means that you need to specify any needed input  via ENVIRO
  go to cloud-deployer/
 
 Make sure that all files are executable and you have sudo permissions .
+chmod -R +x cloud-deployer/*
 
 gce Example:
 - place all needed info in the properties file 
