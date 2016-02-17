@@ -11,7 +11,7 @@ Currently the workstation that runs the client side can be only Ubuntu (OS X is 
 #Usage :
 The main directory has a main run file called : run_deployer.py.
 
-./run_deployer.py [-h] [-m MODE ] -s STEP -C CLOUD.
+./run_deployer.py [-h] [-m MODE ] -s STEP -c CLOUD.
 
 The cloud is one of the supported clouds :
 - amazon - AWS (see : https://jujucharms.com/docs/stable/config-aws for input configuration)
