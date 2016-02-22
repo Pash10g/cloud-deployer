@@ -79,7 +79,7 @@ end
 # Start the mongod service
 service 'mongod' do
   supports :start => true, :stop => true, :restart => true, :status => true
-  action [:enable,:start]
+  action [:enable,:s¯tart]
   subscribes :restart, "template[#{node['mongodb3']['mongod']['config_file']}]", :immediate
   subscribes :restart, "template[#{node['mongodb3']['config']['mongod']['security']['keyFile']}", :immediate
 end
@@ -98,6 +98,7 @@ if not (repl_set_name =~ /none/ or repl_set_name.nil?) and node.role?('shard')
       user node['mongodb3']['user']
       not_if "echo 'rs.status()' | mongo --host localhost:#{node['mongodb3']['config']['mongod']['net']['port']} --quiet | grep #{node["ipaddress"]}" 
       retries 3
+      retry_delay 20
     end
 end
 
